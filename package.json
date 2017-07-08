@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/remojansen/ts-vscode-boilerplate.git"
+    "url": "git+https://github.com/bradodarb/tsketcher.git"
   },
-  "author": "Remo H. Jansen <remo.jansen@wolksoftware.com> (http://www.remojansen.com)",
+  "author": "Brad Murry <bradodarb@hotmail.com> (https://github.com/bradodarb)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/remojansen/ts-vscode-boilerplate/issues"
+    "url": "https://github.com/bradodarb/tsketcher/issues"
   },
-  "homepage": "https://github.com/remojansen/ts-vscode-boilerplate#readme",
+  "homepage": "https://github.com/bradodarb/tsketcher#readme",
   "devDependencies": {
     "@types/chai": "^3.4.34",
     "@types/jquery": "^2.0.33",
