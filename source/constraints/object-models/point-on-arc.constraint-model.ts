@@ -1,0 +1,30 @@
+import { Constraint } from './base.constraint-model';
+import { EndPoint, Arc } from '../../geometry/render-models';
+
+export class PointOnArc extends Constraint {
+
+  public point: EndPoint;
+  public arc: Arc;
+
+  constructor(point, arc) {
+    super('PointOnArc', 'Point On Arc');
+    this.point = point;
+    this.arc = arc;
+  }
+  public getSolveData(resolver) {
+    let params = [];
+    this.point.collectParams(params);
+    this.arc.center.collectParams(params);
+    params.push(this.arc.radius);
+    return [['P2PDistanceV', params, []]];
+  }
+
+  public serialize() {
+    return [this.NAME, [this.point.id, this.arc.id]];
+  }
+
+  public getObjects() {
+    return [this.point, this.arc];
+  }
+
+}

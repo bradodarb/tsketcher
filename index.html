@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TypeScript VS Code boilerplate</title>
-  </head>
-  <body>
-    <h1>Hello, world!</h1>
-    <script src="./dist/myapp.min.js"></script>
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tssketcher test page</title>
+</head>
+
+<body>
+  <canvas id="canvas" width="300" height="300"></canvas>
+  <script src="/dist/tssketcher.min.js"></script>
+  <script>
+    const viewport = new Viewport2d(document.getElementById('canvas'), window);
+  </script>
+</body>
+
 </html>
