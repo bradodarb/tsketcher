@@ -3,10 +3,7 @@ import DefaultStyles from '../config/defaultStyles';
 import { EndPoint, Segment } from '../geometry/render-models';
 
 export default class Layer {
-  constructor(name: string, style: LayerStyle) {
-    this.name = name;
-    this.style = style;
-  }
+
 
   public name: string;
   public style: LayerStyle;
@@ -16,9 +13,14 @@ export default class Layer {
   public objects = [];
   public readOnly = false; // This is actually a mark for boundary layers coming from 3D
 
+  constructor(name: string, style: LayerStyle) {
+    this.name = name;
+    this.style = style;
+  }
+
   public remove(object) {
     const idx = this.objects.indexOf(object);
-    if (idx != -1) {
+    if (idx !== -1) {
       this.objects.splice(idx, 1);
       return true;
     }
@@ -40,9 +42,9 @@ export default class Layer {
   }
 
   public addSegment(x1, y1, x2, y2) {
-    var a = new EndPoint(x1, y1);
-    var b = new EndPoint(x2, y2);
-    var line = new Segment(a, b);
+    const a = new EndPoint(x1, y1);
+    const b = new EndPoint(x2, y2);
+    const line = new Segment(a, b);
     this.add(line);
     return line;
   }

@@ -2,14 +2,16 @@ import { Shape } from './shape.render-model';
 import { Viewport2d } from '../../viewport';
 
 export class ReferencePoint extends Shape {
-  public x: number = 0;
-  public y: number = 0;
+  public x = 0;
+  public y = 0;
   constructor() {
     super('M4CAD.TWO.ReferencePoint');
   }
 
-  draw(viewport: Viewport2d) {
-    if (!this.visible) return;
+  public draw(viewport: Viewport2d) {
+    if (!this.visible) {
+      return;
+    }
     viewport.context.strokeStyle = 'salmon';
     viewport.context.fillStyle = 'salmon';
     viewport.context.lineWidth = 1 / viewport.scale;

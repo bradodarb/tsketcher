@@ -1,8 +1,7 @@
-import * as utils from '../../util';
 import * as math from '../../math/math';
-import Vector from '../../math/vector'
+import Vector from '../../math/vector';
 import { Ref } from '../../constraints/reference';
-import { P2PDistanceV } from '../../constraints'
+import { P2PDistanceV } from '../../constraints';
 import { EndPoint } from './end-point.render-model';
 import { SketchObject } from './sketch-shape.render-model';
 import { Viewport2d } from '../../viewport';
@@ -26,49 +25,49 @@ export class Arc extends SketchObject {
     this.radius.obj = this;
   }
 
-  collectParams(params) {
+  public collectParams(params) {
     this.a.collectParams(params);
     this.b.collectParams(params);
     this.center.collectParams(params);
     params.push(this.radius);
   }
 
-  getReferencePoint() {
+  public getReferencePoint() {
     return this.center;
   }
 
-  translateSelf(dx, dy) {
+  public translateSelf(dx, dy) {
     this.a.translate(dx, dy);
     this.b.translate(dx, dy);
     this.center.translate(dx, dy);
   }
 
 
-  radiusForDrawing() {
+  public radiusForDrawing() {
     return this.distanceA();
   }
 
-  distanceA() {
+  public distanceA() {
     return math.distance(this.a.x, this.a.y, this.center.x, this.center.y);
   }
 
-  distanceB() {
+  public distanceB() {
     return math.distance(this.b.x, this.b.y, this.center.x, this.center.y);
   }
 
-  getStartAngle() {
+  public getStartAngle() {
     return Math.atan2(this.a.y - this.center.y, this.a.x - this.center.x);
   }
 
-  getEndAngle() {
+  public getEndAngle() {
     return Math.atan2(this.b.y - this.center.y, this.b.x - this.center.x);
   }
 
-  drawSelf(viewport: Viewport2d) {
+  public drawSelf(viewport: Viewport2d) {
     viewport.context.beginPath();
-    var r = this.radiusForDrawing();
-    var startAngle = this.getStartAngle();
-    var endAngle;
+    const r = this.radiusForDrawing();
+    const startAngle = this.getStartAngle();
+    let endAngle;
     if (math.areEqual(this.a.x, this.b.x, math.TOLERANCE) &&
       math.areEqual(this.a.y, this.b.y, math.TOLERANCE)) {
       endAngle = startAngle + 2 * Math.PI;
@@ -76,9 +75,9 @@ export class Arc extends SketchObject {
       endAngle = this.getEndAngle();
     }
     viewport.context.arc(this.center.x, this.center.y, r, startAngle, endAngle);
-    var distanceB = this.distanceB();
+    const distanceB = this.distanceB();
     if (Math.abs(r - distanceB) * viewport.scale > 1) {
-      var adj = r / distanceB;
+      const adj = r / distanceB;
       viewport.context.save();
       viewport.context.setLineDash([7 / viewport.scale]);
       viewport.context.lineTo(this.b.x, this.b.y);
@@ -90,22 +89,22 @@ export class Arc extends SketchObject {
     }
   }
 
-  isPointInsideSector(x, y) {
-    var ca = new Vector(this.a.x - this.center.x, this.a.y - this.center.y);
-    var cb = new Vector(this.b.x - this.center.x, this.b.y - this.center.y);
-    var ct = new Vector(x - this.center.x, y - this.center.y);
+  public isPointInsideSector(x, y) {
+    const ca = new Vector(this.a.x - this.center.x, this.a.y - this.center.y);
+    const cb = new Vector(this.b.x - this.center.x, this.b.y - this.center.y);
+    const ct = new Vector(x - this.center.x, y - this.center.y);
 
     ca._normalize();
     cb._normalize();
     ct._normalize();
-    var cosAB = ca.dot(cb);
-    var cosAT = ca.dot(ct);
+    const cosAB = ca.dot(cb);
+    const cosAT = ca.dot(ct);
 
-    var isInside = cosAT >= cosAB;
-    var abInverse = ca.cross(cb).z < 0;
-    var atInverse = ca.cross(ct).z < 0;
+    const isInside = cosAT >= cosAB;
+    const abInverse = ca.cross(cb).z < 0;
+    const atInverse = ca.cross(ct).z < 0;
 
-    var result;
+    let result;
     if (abInverse) {
       result = !atInverse || !isInside;
     } else {
@@ -114,9 +113,9 @@ export class Arc extends SketchObject {
     return result;
   }
 
-  normalDistance(aim) {
+  public normalDistance(aim) {
 
-    var isInsideSector = this.isPointInsideSector(aim.x, aim.y);
+    const isInsideSector = this.isPointInsideSector(aim.x, aim.y);
     if (isInsideSector) {
       return Math.abs(math.distance(aim.x, aim.y, this.center.x, this.center.y) - this.radiusForDrawing());
     } else {
@@ -127,13 +126,13 @@ export class Arc extends SketchObject {
     }
   }
 
-  stabilize(viewer) {
+  public stabilize(viewer) {
     this.radius.set(this.distanceA());
     viewer.parametricManager._add(new P2PDistanceV(this.b, this.center, this.radius));
     viewer.parametricManager._add(new P2PDistanceV(this.a, this.center, this.radius));
   }
 
-  copy() {
+  public copy() {
     return new Arc(this.a.copy(), this.b.copy(), this.center.copy());
   }
 }

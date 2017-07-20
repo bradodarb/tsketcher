@@ -19,7 +19,7 @@ export class Datum /*BasisOrigin*/ extends Shape {
     super('M4CAD.TWO.Datum');
   }
 
-  draw(viewer: Viewport2d) {
+  public draw(viewer: Viewport2d) {
     viewer.context.save();
     if (this.inverseX) {
       this.xScale = -1;
@@ -42,8 +42,8 @@ export class Datum /*BasisOrigin*/ extends Shape {
     viewer.context.lineWidth = 1;
     viewer.context.strokeStyle = this.yColor;
 
-    var headA = 1;
-    var headB = 10;
+    const headA = 1;
+    const headB = 10;
 
     viewer.context.moveTo(0.5, 0);
     viewer.context.lineTo(0.5, - this.lineWidth);

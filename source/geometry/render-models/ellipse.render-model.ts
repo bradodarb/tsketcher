@@ -13,6 +13,10 @@ export class Ellipse extends SketchObject {
   public ep2: EndPoint;
   public radius = new Ref(0);
 
+  public static findMinorRadius(majorRadius, pntRadius, pntAngle) {
+    return Math.abs(Math.sin(pntAngle) / Math.sqrt(1 / sq(pntRadius) - sq(Math.cos(pntAngle) / majorRadius)));
+  }
+
   constructor(ep1: EndPoint, ep2: EndPoint) {
     super('M4CAD.TWO.Ellipse');
     this.ep1 = ep1;
@@ -25,7 +29,7 @@ export class Ellipse extends SketchObject {
     this.radius.obj = this;
   }
 
-  recoverIfNecessary() {
+  public recoverIfNecessary() {
     let recovered = false;
     if (math.distanceAB(this.ep1, this.ep2) <= math.TOLERANCE) {
       this.ep1.translate(-RECOVER_LENGTH, -RECOVER_LENGTH);
@@ -39,7 +43,7 @@ export class Ellipse extends SketchObject {
     return recovered;
   }
 
-  collectParams(params) {
+  public collectParams(params) {
     this.ep1.collectParams(params);
     this.ep2.collectParams(params);
     params.push(this.radius);
@@ -66,7 +70,7 @@ export class Ellipse extends SketchObject {
     return this.ep1.y + (this.ep2.y - this.ep1.y) * 0.5;
   }
 
-  drawSelf(viewport: Viewport2d) {
+  public drawSelf(viewport: Viewport2d) {
     viewport.context.beginPath();
     const radiusX = Math.max(this.radiusX, 1e-8);
     const radiusY = Math.max(this.radiusY, 1e-8);
@@ -74,7 +78,7 @@ export class Ellipse extends SketchObject {
     viewport.context.stroke();
   }
 
-  toEllipseCoordinateSystem(point) {
+  public toEllipseCoordinateSystem(point) {
     let x = point.x - this.centerX;
     let y = point.y - this.centerY;
     const angle = Math.atan2(y, x) - this.rotation;
@@ -84,19 +88,15 @@ export class Ellipse extends SketchObject {
     return { x, y, angle, radius };
   }
 
-  radiusAtAngle(angle) {
-    return Math.sqrt(1 / (sq(Math.cos(angle) / this.radiusX) + sq(Math.sin(angle) / this.radiusY)));
+  public radiusAtAngle(angle) {
+    return Math.sqrt(1 / (Math.pow(Math.cos(angle) / this.radiusX, 2) + Math.pow(Math.sin(angle) / this.radiusY, 2)));
   }
 
-  normalDistance(aim) {
+  public normalDistance(aim) {
     const polarPoint = this.toEllipseCoordinateSystem(aim);
     const L = this.radiusAtAngle(polarPoint.angle);
     return Math.abs(polarPoint.radius - L);
   }
 
-  static findMinorRadius(majorRadius, pntRadius, pntAngle) {
-    return Math.abs(Math.sin(pntAngle) / Math.sqrt(1 / sq(pntRadius) - sq(Math.cos(pntAngle) / majorRadius)));
-  }
 }
-const sq = (a) => a * a;
 const RECOVER_LENGTH = 100;

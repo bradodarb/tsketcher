@@ -1,4 +1,4 @@
-import Vector from './vector'
+import Vector from './vector';
 
 export default class BBox {
 
@@ -9,8 +9,6 @@ export default class BBox {
   public maxY = -Number.MAX_VALUE;
   public maxZ = -Number.MAX_VALUE;
 
-  constructor() {
-  }
 
   public checkBounds(x, y, z) {
     z = z || 0;

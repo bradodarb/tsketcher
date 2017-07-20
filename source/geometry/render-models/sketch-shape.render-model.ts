@@ -1,6 +1,8 @@
 import { Generator } from '../../util/id-generator';
 import { Shape } from './shape.render-model';
 import { Viewport2d } from '../../viewport';
+
+
 export class SketchObject extends Shape {
 
   public id = Generator.genID();
@@ -32,7 +34,7 @@ export class SketchObject extends Shape {
     return visitor(this);
   }
 
-  public stabilize(viewer) { }
+  public stabilize(viewer) { return undefined; }
 
   public recoverIfNecessary() {
     return false;
@@ -42,7 +44,7 @@ export class SketchObject extends Shape {
     if (!!this.aux) {
       return true;
     }
-    for (var i = 0; i < this.linked.length; ++i) {
+    for (let i = 0; i < this.linked.length; ++i) {
       if (!!this.linked[i].aux) {
         return true;
       }
@@ -50,21 +52,21 @@ export class SketchObject extends Shape {
     return false;
   }
 
-  translate(dx, dy, translated = {}) {
+  public translate(dx, dy, translated = {}) {
     if (this.isAuxOrLinkedTo()) {
       return;
     }
     translated[this.id] = 'x';
-    for (var i = 0; i < this.linked.length; ++i) {
-      if (translated[this.linked[i].id] != 'x') {
+    for (let i = 0; i < this.linked.length; ++i) {
+      if (translated[this.linked[i].id] !== 'x') {
         this.linked[i]._translate(dx, dy, translated);
       }
     }
     this.translateSelf(dx, dy);
-  };
+  }
 
 
-  translateSelf(dx, dy) {
+  public translateSelf(dx, dy) {
     this.accept(function (obj) {
       if (obj.className === 'M4CAD.TWO.EndPoint') {
         obj.translate(dx, dy);
@@ -73,7 +75,7 @@ export class SketchObject extends Shape {
     });
   }
 
-  draw(viewer: Viewport2d) {
+  public draw(viewer: Viewport2d) {
     if (!this.visible) {
       return;
     }
@@ -87,7 +89,7 @@ export class SketchObject extends Shape {
     }
   }
 
-  copy() {
+  public copy() {
     throw 'method not implemented';
   }
 }

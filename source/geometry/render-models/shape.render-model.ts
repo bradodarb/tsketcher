@@ -21,11 +21,11 @@ export class Shape {
 
 
 
-  public draw(viewer: Viewport2d) { }
-  protected drawSelf(viewer: Viewport2d) { }
+  public draw(viewer: Viewport2d) { return undefined; }
+  protected drawSelf(viewer: Viewport2d) { return undefined; }
 
-  public translate(dx, dy) { }
-  protected translateSelf(dx, dy) { }
+  public translate(dx, dy) { return undefined; }
+  protected translateSelf(dx, dy) { return undefined; }
 
 
 

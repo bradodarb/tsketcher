@@ -1,4 +1,4 @@
-import { ConstraintResolver } from './base.constraint-solver-model'
+import { ConstraintResolver } from './base.constraint-solver-model';
 
 
 export class Diff extends ConstraintResolver {
@@ -15,10 +15,8 @@ export class Diff extends ConstraintResolver {
   }
 
   public gradient(out: Array<number>): void {
-    this.gradient = function (out) {
-      out[0] = 1;
-      out[1] = -1;
-    };
+    out[0] = 1;
+    out[1] = -1;
   }
 
 }

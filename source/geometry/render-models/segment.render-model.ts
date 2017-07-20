@@ -8,36 +8,8 @@ export class Segment extends SketchObject {
 
   public a: EndPoint;
   public b: EndPoint;
-  constructor(a, b) {
-    super('M4CAD.TWO.Segment');
-    this.a = a;
-    this.b = b;
-    a.parent = this;
-    b.parent = this;
-    this.children.push(a, b);
-  }
 
-  recoverIfNecessary() {
-    if (math.distanceAB(this.a, this.b) > math.TOLERANCE) {
-      return false;
-    } else {
-      const recoverLength = 100;
-      this.a.translate(-recoverLength, -recoverLength);
-      this.b.translate(recoverLength, recoverLength);
-      return true;
-    }
-  }
-
-  collectParams(params) {
-    this.a.collectParams(params);
-    this.b.collectParams(params);
-  }
-
-  normalDistance(aim) {
-    return Segment.calcNormalDistance(aim, this.a, this.b);
-  }
-
-  static calcNormalDistance(aim, segmentA, segmentB) {
+  public static calcNormalDistance(aim, segmentA, segmentB) {
     const ab = new Vector(segmentB.x - segmentA.x, segmentB.y - segmentA.y)
     const e = ab.normalize();
     const a = new Vector(aim.x - segmentA.x, aim.y - segmentA.y);
@@ -56,16 +28,47 @@ export class Segment extends SketchObject {
     return n.length();
   }
 
-  getReferencePoint() {
+  constructor(a, b) {
+    super('M4CAD.TWO.Segment');
+    this.a = a;
+    this.b = b;
+    a.parent = this;
+    b.parent = this;
+    this.children.push(a, b);
+  }
+
+  public recoverIfNecessary() {
+    if (math.distanceAB(this.a, this.b) > math.TOLERANCE) {
+      return false;
+    } else {
+      const recoverLength = 100;
+      this.a.translate(-recoverLength, -recoverLength);
+      this.b.translate(recoverLength, recoverLength);
+      return true;
+    }
+  }
+
+  public collectParams(params) {
+    this.a.collectParams(params);
+    this.b.collectParams(params);
+  }
+
+  public normalDistance(aim) {
+    return Segment.calcNormalDistance(aim, this.a, this.b);
+  }
+
+
+
+  public getReferencePoint() {
     return this.a;
   }
 
-  translateSelf(dx, dy) {
+  public translateSelf(dx, dy) {
     this.a.translate(dx, dy);
     this.b.translate(dx, dy);
   }
 
-  drawSelf(viewport: Viewport2d) {
+  public drawSelf(viewport: Viewport2d) {
     viewport.context.beginPath();
     viewport.context.moveTo(this.a.x, this.a.y);
     viewport.context.lineTo(this.b.x, this.b.y);
@@ -75,7 +78,7 @@ export class Segment extends SketchObject {
     //  ctx.restore();
   }
 
-  copy() {
+  public copy() {
     return new Segment(this.a.copy(), this.b.copy());
   }
 }

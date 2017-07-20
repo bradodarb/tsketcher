@@ -1,8 +1,4 @@
-import * as utils from '../../util';
-import * as math from '../../math/math';
-
 import { EndPoint } from './end-point.render-model';
-import { Ref } from '../../constraints/reference';
 import { Viewport2d } from '../../viewport';
 import { SketchObject } from './sketch-shape.render-model';
 
@@ -19,9 +15,9 @@ export class CrossHair extends SketchObject {
     this.style = null;
   }
 
-  drawSelf(viewport: Viewport2d) {
+  public drawSelf(viewport: Viewport2d) {
     viewport.context.beginPath();
-    var rad = this.radius / viewport.scale;
+    const rad = this.radius / viewport.scale;
     viewport.context.moveTo(this.center.x - rad, this.center.y);
     viewport.context.lineTo(this.center.x + rad, this.center.y);
     viewport.context.closePath();

@@ -8,7 +8,7 @@
  * are changed to implement this.</p>
  *
  * <p>The resolution engine is a simple translation of the MINPACK <a
- * href="http://www.netlib.org/minpack/lmder.f">lmder</a> routine with minor
+ * href='http://www.netlib.org/minpack/lmder.f'>lmder</a> routine with minor
  * changes. The changes include the over-determined resolution, the use of
  * inherited convergence checker and the Q.R. decomposition which has been
  * rewritten following the algorithm described in the
@@ -22,10 +22,10 @@
  * <li>Jorge J. More</li>
  * </ul>
  * The redistribution policy for MINPACK is available <a
- * href="http://www.netlib.org/minpack/disclaimer">here</a>, for convenience, it
+ * href='http://www.netlib.org/minpack/disclaimer'>here</a>, for convenience, it
  * is reproduced below.</p>
  *
- * <table border="0" width="80%" cellpadding="10" align="center" bgcolor="#E0E0E0">
+ * <table border='0' width='80%' cellpadding='10' align='center' bgcolor='#E0E0E0'>
  * <tr><td>
  *    Minpack Copyright Notice (1999) University of Chicago.
  *    All rights reserved
@@ -47,7 +47,7 @@
  *           Chicago, as Operator of Argonne National Laboratory.</code>
  *     Alternately, this acknowledgment may appear in the software itself,
  *     if and wherever such third-party acknowledgments normally appear.</li>
- * <li><strong>WARRANTY DISCLAIMER. THE SOFTWARE IS SUPPLIED "AS IS"
+ * <li><strong>WARRANTY DISCLAIMER. THE SOFTWARE IS SUPPLIED 'AS IS'
  *     WITHOUT WARRANTY OF ANY KIND. THE COPYRIGHT HOLDER, THE
  *     UNITED STATES, THE UNITED STATES DEPARTMENT OF ENERGY, AND
  *     THEIR EMPLOYEES: (1) DISCLAIM ANY WARRANTIES, EXPRESS OR
@@ -87,20 +87,20 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
   this.jacobian = jacobian;
 
   this.identity = function (size) {
-    var out = [];
-    for (var row = 0; row < size; ++row) {
+    const out = [];
+    for (let row = 0; row < size; ++row) {
       out.push([]);
-      for (var col = 0; col < size; ++col) {
+      for (let col = 0; col < size; ++col) {
         out[row].push(row === col ? 1 : 0);
       }
     }
     return out;
-  }
+  };
 
 
 
   /** Square-root of the weight matrix. */
-  this.weightMatrixSqrt = this.identity(target.length);//TMath.identity(new TMath.Matrix(target.length, target.length)); //TODO:
+  this.weightMatrixSqrt = this.identity(target.length); //TMath.identity(new TMath.Matrix(target.length, target.length)); //TODO:
   this.weightMatrix = this.identity(target.length);
   /** Cost value (square root of the sum of the residuals). */
   this.cost = null;
@@ -120,7 +120,7 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
   this.lmPar = null;
   /** Parameters evolution direction associated with lmPar. */
   this.lmDir = null;
-  /** Positive input variable used in determining the initial step bound. */
+  /** Positive input constiable used in determining the initial step bound. */
   this.initialStepBoundFactor = null;
   /** Desired relative error in the sum of squares. */
   this.costRelativeTolerance = null;
@@ -140,21 +140,22 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
 
 
   function arr(size) {
-    var out = [];
+    const out = [];
     out.length = size;
-    for (var i = 0; i < size; ++i) {
+    for (let i = 0; i < size; ++i) {
       out[i] = 0;
     }
     return out;
   }
 
   function Arrays_fill(a, fromIndex, toIndex, val) {
-    for (var i = fromIndex; i < toIndex; i++)
+    for (let i = fromIndex; i < toIndex; i++) {
       a[i] = val;
+    }
   }
 
-  //    var SAFE_MIN = Number.MIN_VALUE; //FIXME!!!!
-  var SAFE_MIN = 1e-30; //FIXME!!!!
+  //    const SAFE_MIN = Number.MIN_VALUE; //FIXME!!!!
+  const SAFE_MIN = 1e-30; //FIXME!!!!
 
   /**
    * Build an optimizer for least squares problems with default values
@@ -172,7 +173,7 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
    */
   this.init = function () {
     this.init1(100, 1e-10, 1e-10, 1e-10, SAFE_MIN);
-  }
+  };
 
 
 
@@ -199,7 +200,7 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
     orthoTolerance) {
     this.init1(100, costRelativeTolerance, parRelativeTolerance, orthoTolerance,
       SAFE_MIN);
-  }
+  };
 
   /**
    * The arguments control the behaviour of the default convergence checking
@@ -207,7 +208,7 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
    * Additional criteria can defined through the setting of a {@link
    * ConvergenceChecker}.
    *
-   * @param initialStepBoundFactor Positive input variable used in
+   * @param initialStepBoundFactor Positive input constiable used in
    * determining the initial step bound. This bound is set to the
    * product of initialStepBoundFactor and the euclidean norm of
    * {@code diag * x} if non-zero, or else to {@code initialStepBoundFactor}
@@ -234,14 +235,14 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
     this.parRelativeTolerance = parRelativeTolerance;
     this.orthoTolerance = orthoTolerance;
     this.qrRankingThreshold = threshold;
-  }
+  };
 
   /** {@inheritDoc} */
 
   this.doOptimize = function () {
-    var nR = this.target.length; // Number of observed data.
-    var currentPoint = this.startPoint;
-    var nC = currentPoint.length; // Number of parameters.
+    const nR = this.target.length; // Number of observed data.
+    const currentPoint = this.startPoint;
+    const nC = currentPoint.length; // Number of parameters.
 
     // arrays shared with the other private methods
     this.solvedCols = Math.min(nR, nC);
@@ -252,39 +253,39 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
     this.lmDir = arr(nC);
 
     // local point
-    var delta = 0;
-    var xNorm = 0;
-    var diag = arr(nC);
-    var oldX = arr(nC);
-    var oldRes = arr(nR);
-    var oldObj = arr(nR);
-    var qtf = arr(nR);
-    var work1 = arr(nC);
-    var work2 = arr(nC);
-    var work3 = arr(nC);
+    let delta = 0;
+    let xNorm = 0;
+    const diag = arr(nC);
+    const oldX = arr(nC);
+    let oldRes = arr(nR);
+    let oldObj = arr(nR);
+    const qtf = arr(nR);
+    const work1 = arr(nC);
+    const work2 = arr(nC);
+    const work3 = arr(nC);
 
-    var weightMatrixSqrt = this.getWeightSquareRoot();
+    const weightMatrixSqrt = this.getWeightSquareRoot();
 
     // Evaluate the function at the starting point and calculate its norm.
-    var currentObjective = this.computeObjectiveValue(currentPoint);
-    var currentResiduals = this.computeResiduals(currentObjective);
-    var current = [currentPoint, currentObjective];
-    var currentCost = this.computeCost(currentResiduals);
+    let currentObjective = this.computeObjectiveValue(currentPoint);
+    let currentResiduals = this.computeResiduals(currentObjective);
+    let current = [currentPoint, currentObjective];
+    let currentCost = this.computeCost(currentResiduals);
 
     // Outer loop.
     this.lmPar = 0;
-    var firstIteration = true;
-    var iter = 0;
+    let firstIteration = true;
+    let iter = 0;
 
     while (true) {
       ++iter;
-      var previous = current;
+      const previous = current;
 
       // QR decomposition of the jacobian matrix
       this.qrDecomposition(this.computeWeightedJacobian(currentPoint));
 
       this.weightedResidual = this.operate(weightMatrixSqrt, currentResiduals);
-      for (var i = 0; i < nR; i++) {
+      for (let i = 0; i < nR; i++) {
         qtf[i] = this.weightedResidual[i];
       }
 
@@ -293,8 +294,8 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
 
       // now we don't need Q anymore,
       // so let jacobian contain the R matrix with its diagonal elements
-      for (var k = 0; k < this.solvedCols; ++k) {
-        var pk = this.permutation[k];
+      for (let k = 0; k < this.solvedCols; ++k) {
+        const pk = this.permutation[k];
         this.weightedJacobian[k][pk] = this.diagR[pk];
       }
 
@@ -302,30 +303,30 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
         // scale the point according to the norms of the columns
         // of the initial jacobian
         xNorm = 0;
-        for (var k = 0; k < nC; ++k) {
-          var dk = this.jacNorm[k];
-          if (dk == 0) {
+        for (let k = 0; k < nC; ++k) {
+          let dk = this.jacNorm[k];
+          if (dk === 0) {
             dk = 1.0;
           }
-          var xk = dk * currentPoint[k];
+          const xk = dk * currentPoint[k];
           xNorm += xk * xk;
           diag[k] = dk;
         }
         xNorm = Math.sqrt(xNorm);
 
         // initialize the step bound delta
-        delta = (xNorm == 0) ? this.initialStepBoundFactor : (this.initialStepBoundFactor * xNorm);
+        delta = (xNorm === 0) ? this.initialStepBoundFactor : (this.initialStepBoundFactor * xNorm);
       }
 
       // check orthogonality between function vector and jacobian columns
-      var maxCosine = 0;
-      if (currentCost != 0) {
-        for (var j = 0; j < this.solvedCols; ++j) {
-          var pj = this.permutation[j];
-          var s = this.jacNorm[pj];
-          if (s != 0) {
-            var sum = 0;
-            for (var i = 0; i <= j; ++i) {
+      let maxCosine = 0;
+      if (currentCost !== 0) {
+        for (let j = 0; j < this.solvedCols; ++j) {
+          const pj = this.permutation[j];
+          const s = this.jacNorm[pj];
+          if (s !== 0) {
+            let sum = 0;
+            for (let i = 0; i <= j; ++i) {
               sum += this.weightedJacobian[i][pj] * qtf[i];
             }
             maxCosine = Math.max(maxCosine, Math.abs(sum) / (s * currentCost));
@@ -339,20 +340,21 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
       }
 
       // rescale if necessary
-      for (var j = 0; j < nC; ++j) {
+      for (let j = 0; j < nC; ++j) {
         diag[j] = Math.max(diag[j], this.jacNorm[j]);
       }
 
       // Inner loop.
-      for (var ratio = 0; ratio < 1.0e-4;) {
+      let inc = 0;
+      for (let ratio = 0; ratio < 1.0e-4; ++inc) {
 
         // save the state
-        for (var j = 0; j < this.solvedCols; ++j) {
-          var pj = this.permutation[j];
+        for (let j = 0; j < this.solvedCols; ++j) {
+          const pj = this.permutation[j];
           oldX[pj] = currentPoint[pj];
         }
-        var previousCost = currentCost;
-        var tmpVec = this.weightedResidual;
+        const previousCost = currentCost;
+        let tmpVec = this.weightedResidual;
         this.weightedResidual = oldRes;
         oldRes = tmpVec;
         tmpVec = currentObjective;
@@ -363,9 +365,9 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
         this.determineLMParameter(qtf, delta, diag, work1, work2, work3);
 
         // compute the new point and the norm of the evolution direction
-        var lmNorm = 0;
-        for (var j = 0; j < this.solvedCols; ++j) {
-          var pj = this.permutation[j];
+        let lmNorm = 0;
+        for (let j = 0; j < this.solvedCols; ++j) {
+          const pj = this.permutation[j];
           this.lmDir[pj] = -this.lmDir[pj];
           currentPoint[pj] = oldX[pj] + this.lmDir[pj];
           let s = diag[pj] * this.lmDir[pj];
@@ -384,45 +386,45 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
         currentCost = this.computeCost(currentResiduals);
 
         // compute the scaled actual reduction
-        var actRed = -1.0;
+        let actRed = -1.0;
         if (0.1 * currentCost < previousCost) {
-          var r = currentCost / previousCost;
+          const r = currentCost / previousCost;
           actRed = 1.0 - r * r;
         }
 
         // compute the scaled predicted reduction
         // and the scaled directional derivative
-        for (var j = 0; j < this.solvedCols; ++j) {
-          var pj = this.permutation[j];
-          var dirJ = this.lmDir[pj];
+        for (let j = 0; j < this.solvedCols; ++j) {
+          const pj = this.permutation[j];
+          const dirJ = this.lmDir[pj];
           work1[j] = 0;
-          for (var i = 0; i <= j; ++i) {
+          for (let i = 0; i <= j; ++i) {
             work1[i] += this.weightedJacobian[i][pj] * dirJ;
           }
         }
-        var coeff1 = 0;
-        for (var j = 0; j < this.solvedCols; ++j) {
+        let coeff1 = 0;
+        for (let j = 0; j < this.solvedCols; ++j) {
           coeff1 += work1[j] * work1[j];
         }
-        var pc2 = previousCost * previousCost;
+        const pc2 = previousCost * previousCost;
         coeff1 = coeff1 / pc2;
-        var coeff2 = this.lmPar * lmNorm * lmNorm / pc2;
-        var preRed = coeff1 + 2 * coeff2;
-        var dirDer = -(coeff1 + coeff2);
+        const coeff2 = this.lmPar * lmNorm * lmNorm / pc2;
+        const preRed = coeff1 + 2 * coeff2;
+        const dirDer = -(coeff1 + coeff2);
 
         // ratio of the actual to the predicted reduction
-        ratio = (preRed == 0) ? 0 : (actRed / preRed);
+        ratio = (preRed === 0) ? 0 : (actRed / preRed);
 
         // update the step bound
         if (ratio <= 0.25) {
-          var tmp =
+          let tmp =
             (actRed < 0) ? (0.5 * dirDer / (dirDer + 0.5 * actRed)) : 0.5;
           if ((0.1 * currentCost >= previousCost) || (tmp < 0.1)) {
             tmp = 0.1;
           }
           delta = tmp * Math.min(delta, 10.0 * lmNorm);
           this.lmPar /= tmp;
-        } else if ((this.lmPar == 0) || (ratio >= 0.75)) {
+        } else if ((this.lmPar === 0) || (ratio >= 0.75)) {
           delta = 2 * lmNorm;
           this.lmPar *= 0.5;
         }
@@ -432,8 +434,8 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
           // successful iteration, update the norm
           firstIteration = false;
           xNorm = 0;
-          for (var k = 0; k < nC; ++k) {
-            var xK = diag[k] * currentPoint[k];
+          for (let k = 0; k < nC; ++k) {
+            const xK = diag[k] * currentPoint[k];
             xNorm += xK * xK;
           }
           xNorm = Math.sqrt(xNorm);
@@ -449,8 +451,8 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
         } else {
           // failed iteration, reset the previous values
           currentCost = previousCost;
-          for (var j = 0; j < this.solvedCols; ++j) {
-            var pj = this.permutation[j];
+          for (let j = 0; j < this.solvedCols; ++j) {
+            const pj = this.permutation[j];
             currentPoint[pj] = oldX[pj];
           }
           tmpVec = this.weightedResidual;
@@ -459,7 +461,7 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
           tmpVec = currentObjective;
           currentObjective = oldObj;
           oldObj = tmpVec;
-          // Reset "current" to previous values.
+          // Reset 'current' to previous values.
           current = [currentPoint, currentObjective];
         }
 
@@ -475,20 +477,20 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
         // tests for termination and stringent tolerances
         // (2.2204e-16 is the machine epsilon for IEEE754)
         if ((Math.abs(actRed) <= 2.2204e-16) && (preRed <= 2.2204e-16) && (ratio <= 2.0)) {
-          throw "TOO_SMALL_COST_RELATIVE_TOLERANCE: " + this.costRelativeTolerance;
+          throw 'TOO_SMALL_COST_RELATIVE_TOLERANCE: ' + this.costRelativeTolerance;
         } else if (delta <= 2.2204e-16 * xNorm) {
-          throw "TOO_SMALL_PARAMETERS_RELATIVE_TOLERANCE: " + this.parRelativeTolerance;
+          throw 'TOO_SMALL_PARAMETERS_RELATIVE_TOLERANCE: ' + this.parRelativeTolerance;
         } else if (maxCosine <= 2.2204e-16) {
-          throw "TOO_SMALL_ORTHOGONALITY_TOLERANCE: " + this.orthoTolerance;
+          throw 'TOO_SMALL_ORTHOGONALITY_TOLERANCE: ' + this.orthoTolerance;
         }
       }
     }
-  }
+  };
 
   /**
    * Determine the Levenberg-Marquardt parameter.
    * <p>This implementation is a translation in Java of the MINPACK
-   * <a href="http://www.netlib.org/minpack/lmpar.f">lmpar</a>
+   * <a href='http://www.netlib.org/minpack/lmpar.f'>lmpar</a>
    * routine.</p>
    * <p>This method sets the lmPar and lmDir attributes.</p>
    * <p>The authors of the original fortran function are:</p>
@@ -509,20 +511,20 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
    */
   this.determineLMParameter = function (qy, delta, diag,
     work1, work2, work3) {
-    var nC = this.weightedJacobian[0].length;
+    const nC = this.weightedJacobian[0].length;
 
     // compute and store in x the gauss-newton direction, if the
     // jacobian is rank-deficient, obtain a least squares solution
-    for (var j = 0; j < this.rank; ++j) {
+    for (let j = 0; j < this.rank; ++j) {
       this.lmDir[this.permutation[j]] = qy[j];
     }
     for (let j = this.rank; j < nC; ++j) {
       this.lmDir[this.permutation[j]] = 0;
     }
-    for (var k = this.rank - 1; k >= 0; --k) {
-      var pk = this.permutation[k];
-      var ypk = this.lmDir[pk] / this.diagR[pk];
-      for (var i = 0; i < k; ++i) {
+    for (let k = this.rank - 1; k >= 0; --k) {
+      const pk = this.permutation[k];
+      const ypk = this.lmDir[pk] / this.diagR[pk];
+      for (let i = 0; i < k; ++i) {
         this.lmDir[this.permutation[i]] -= ypk * this.weightedJacobian[i][pk];
       }
       this.lmDir[pk] = ypk;
@@ -530,15 +532,15 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
 
     // evaluate the function at the origin, and test
     // for acceptance of the Gauss-Newton direction
-    var dxNorm = 0;
+    let dxNorm = 0;
     for (let j = 0; j < this.solvedCols; ++j) {
-      var pj = this.permutation[j];
+      const pj = this.permutation[j];
       let s = diag[pj] * this.lmDir[pj];
       work1[pj] = s;
       dxNorm += s * s;
     }
     dxNorm = Math.sqrt(dxNorm);
-    var fp = dxNorm - delta;
+    let fp = dxNorm - delta;
     if (fp <= 0.1 * delta) {
       this.lmPar = 0;
       return;
@@ -547,21 +549,21 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
     // if the jacobian is not rank deficient, the Newton step provides
     // a lower bound, parl, for the zero of the function,
     // otherwise set this bound to zero
-    var sum2;
-    var parl = 0;
-    if (this.rank == this.solvedCols) {
-      for (var j = 0; j < this.solvedCols; ++j) {
-        var pj = this.permutation[j];
+    let sum2;
+    let parl = 0;
+    if (this.rank === this.solvedCols) {
+      for (let j = 0; j < this.solvedCols; ++j) {
+        const pj = this.permutation[j];
         work1[pj] *= diag[pj] / dxNorm;
       }
       sum2 = 0;
-      for (var j = 0; j < this.solvedCols; ++j) {
-        var pj = this.permutation[j];
-        var sum = 0;
-        for (var i = 0; i < j; ++i) {
+      for (let j = 0; j < this.solvedCols; ++j) {
+        const pj = this.permutation[j];
+        let sum = 0;
+        for (let i = 0; i < j; ++i) {
           sum += this.weightedJacobian[i][pj] * work1[this.permutation[i]];
         }
-        var s = (work1[pj] - sum) / this.diagR[pj];
+        const s = (work1[pj] - sum) / this.diagR[pj];
         work1[pj] = s;
         sum2 += s * s;
       }
@@ -570,18 +572,18 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
 
     // calculate an upper bound, paru, for the zero of the function
     sum2 = 0;
-    for (var j = 0; j < this.solvedCols; ++j) {
-      var pj = this.permutation[j];
-      var sum = 0;
-      for (var i = 0; i <= j; ++i) {
+    for (let j = 0; j < this.solvedCols; ++j) {
+      const pj = this.permutation[j];
+      let sum = 0;
+      for (let i = 0; i <= j; ++i) {
         sum += this.weightedJacobian[i][pj] * qy[i];
       }
       sum /= diag[pj];
       sum2 += sum * sum;
     }
-    var gNorm = Math.sqrt(sum2);
-    var paru = gNorm / delta;
-    if (paru == 0) {
+    const gNorm = Math.sqrt(sum2);
+    let paru = gNorm / delta;
+    if (paru === 0) {
       // 2.2251e-308 is the smallest positive real for IEE754
       paru = 2.2251e-308 / Math.min(delta, 0.1);
     }
@@ -589,60 +591,60 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
     // if the input par lies outside of the interval (parl,paru),
     // set par to the closer endpoint
     this.lmPar = Math.min(paru, Math.max(this.lmPar, parl));
-    if (this.lmPar == 0) {
+    if (this.lmPar === 0) {
       this.lmPar = gNorm / dxNorm;
     }
 
-    for (var countdown = 10; countdown >= 0; --countdown) {
+    for (let countdown = 10; countdown >= 0; --countdown) {
 
       // evaluate the function at the current value of lmPar
-      if (this.lmPar == 0) {
+      if (this.lmPar === 0) {
         this.lmPar = Math.max(2.2251e-308, 0.001 * paru);
       }
-      var sPar = Math.sqrt(this.lmPar);
-      for (var j = 0; j < this.solvedCols; ++j) {
-        var pj = this.permutation[j];
+      const sPar = Math.sqrt(this.lmPar);
+      for (let j = 0; j < this.solvedCols; ++j) {
+        const pj = this.permutation[j];
         work1[pj] = sPar * diag[pj];
       }
       this.determineLMDirection(qy, work1, work2, work3);
 
       dxNorm = 0;
-      for (var j = 0; j < this.solvedCols; ++j) {
-        var pj = this.permutation[j];
-        var s = diag[pj] * this.lmDir[pj];
+      for (let j = 0; j < this.solvedCols; ++j) {
+        const pj = this.permutation[j];
+        const s = diag[pj] * this.lmDir[pj];
         work3[pj] = s;
         dxNorm += s * s;
       }
       dxNorm = Math.sqrt(dxNorm);
-      var previousFP = fp;
+      const previousFP = fp;
       fp = dxNorm - delta;
 
       // if the function is small enough, accept the current value
       // of lmPar, also test for the exceptional cases where parl is zero
       if ((Math.abs(fp) <= 0.1 * delta) ||
-        ((parl == 0) && (fp <= previousFP) && (previousFP < 0))) {
+        ((parl === 0) && (fp <= previousFP) && (previousFP < 0))) {
         return;
       }
 
       // compute the Newton correction
-      for (var j = 0; j < this.solvedCols; ++j) {
-        var pj = this.permutation[j];
+      for (let j = 0; j < this.solvedCols; ++j) {
+        const pj = this.permutation[j];
         work1[pj] = work3[pj] * diag[pj] / dxNorm;
       }
-      for (var j = 0; j < this.solvedCols; ++j) {
-        var pj = this.permutation[j];
+      for (let j = 0; j < this.solvedCols; ++j) {
+        const pj = this.permutation[j];
         work1[pj] /= work2[j];
-        var tmp = work1[pj];
-        for (var i = j + 1; i < this.solvedCols; ++i) {
+        const tmp = work1[pj];
+        for (let i = j + 1; i < this.solvedCols; ++i) {
           work1[this.permutation[i]] -= this.weightedJacobian[i][pj] * tmp;
         }
       }
       sum2 = 0;
-      for (var j = 0; j < this.solvedCols; ++j) {
+      for (let j = 0; j < this.solvedCols; ++j) {
         let s = work1[this.permutation[j]];
         sum2 += s * s;
       }
-      var correction = fp / (delta * sum2);
+      const correction = fp / (delta * sum2);
 
       // depending on the sign of the function, update parl or paru.
       if (fp > 0) {
@@ -655,12 +657,12 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
       this.lmPar = Math.max(parl, this.lmPar + correction);
 
     }
-  }
+  };
 
   /**
    * Solve a*x = b and d*x = 0 in the least squares sense.
    * <p>This implementation is a translation in Java of the MINPACK
-   * <a href="http://www.netlib.org/minpack/qrsolv.f">qrsolv</a>
+   * <a href='http://www.netlib.org/minpack/qrsolv.f'>qrsolv</a>
    * routine.</p>
    * <p>This method sets the lmDir and lmDiag attributes.</p>
    * <p>The authors of the original fortran function are:</p>
@@ -681,9 +683,9 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
 
     // copy R and Qty to preserve input and initialize s
     //  in particular, save the diagonal elements of R in lmDir
-    for (var j = 0; j < this.solvedCols; ++j) {
-      var pj = this.permutation[j];
-      for (var i = j + 1; i < this.solvedCols; ++i) {
+    for (let j = 0; j < this.solvedCols; ++j) {
+      const pj = this.permutation[j];
+      for (let i = j + 1; i < this.solvedCols; ++i) {
         this.weightedJacobian[i][pj] = this.weightedJacobian[j][this.permutation[i]];
       }
       this.lmDir[j] = this.diagR[pj];
@@ -691,13 +693,13 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
     }
 
     // eliminate the diagonal matrix d using a Givens rotation
-    for (var j = 0; j < this.solvedCols; ++j) {
+    for (let j = 0; j < this.solvedCols; ++j) {
 
       // prepare the row of d to be eliminated, locating the
       // diagonal element using p from the Q.R. factorization
-      var pj = this.permutation[j];
-      var dpj = diag[pj];
-      if (dpj != 0) {
+      const pj = this.permutation[j];
+      const dpj = diag[pj];
+      if (dpj !== 0) {
         Arrays_fill(lmDiag, j + 1, lmDiag.length, 0);
       }
       lmDiag[j] = dpj;
@@ -705,23 +707,23 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
       //  the transformations to eliminate the row of d
       // modify only a single element of Qty
       // beyond the first n, which is initially zero.
-      var qtbpj = 0;
-      for (var k = j; k < this.solvedCols; ++k) {
-        var pk = this.permutation[k];
+      let qtbpj = 0;
+      for (let k = j; k < this.solvedCols; ++k) {
+        const pk = this.permutation[k];
 
         // determine a Givens rotation which eliminates the
         // appropriate element in the current row of d
-        if (lmDiag[k] != 0) {
+        if (lmDiag[k] !== 0) {
 
-          var sin;
-          var cos;
-          var rkk = this.weightedJacobian[k][pk];
+          let sin;
+          let cos;
+          const rkk = this.weightedJacobian[k][pk];
           if (Math.abs(rkk) < Math.abs(lmDiag[k])) {
-            var cotan = rkk / lmDiag[k];
+            const cotan = rkk / lmDiag[k];
             sin = 1.0 / Math.sqrt(1.0 + cotan * cotan);
             cos = sin * cotan;
           } else {
-            var tan = lmDiag[k] / rkk;
+            const tan = lmDiag[k] / rkk;
             cos = 1.0 / Math.sqrt(1.0 + tan * tan);
             sin = cos * tan;
           }
@@ -729,14 +731,14 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
           // compute the modified diagonal element of R and
           // the modified element of (Qty,0)
           this.weightedJacobian[k][pk] = cos * rkk + sin * lmDiag[k];
-          var temp = cos * work[k] + sin * qtbpj;
+          const temp = cos * work[k] + sin * qtbpj;
           qtbpj = -sin * work[k] + cos * qtbpj;
           work[k] = temp;
 
           // accumulate the tranformation in the row of s
-          for (var i = k + 1; i < this.solvedCols; ++i) {
-            var rik = this.weightedJacobian[i][pk];
-            var temp2 = cos * rik + sin * lmDiag[i];
+          for (let i = k + 1; i < this.solvedCols; ++i) {
+            const rik = this.weightedJacobian[i][pk];
+            const temp2 = cos * rik + sin * lmDiag[i];
             lmDiag[i] = -sin * rik + cos * lmDiag[i];
             this.weightedJacobian[i][pk] = temp2;
           }
@@ -751,9 +753,9 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
 
     // solve the triangular system for z, if the system is
     // singular, then obtain a least squares solution
-    var nSing = this.solvedCols;
-    for (var j = 0; j < this.solvedCols; ++j) {
-      if ((lmDiag[j] == 0) && (nSing == this.solvedCols)) {
+    let nSing = this.solvedCols;
+    for (let j = 0; j < this.solvedCols; ++j) {
+      if ((lmDiag[j] === 0) && (nSing === this.solvedCols)) {
         nSing = j;
       }
       if (nSing < this.solvedCols) {
@@ -761,10 +763,10 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
       }
     }
     if (nSing > 0) {
-      for (var j = nSing - 1; j >= 0; --j) {
-        var pj = this.permutation[j];
-        var sum = 0;
-        for (var i = j + 1; i < nSing; ++i) {
+      for (let j = nSing - 1; j >= 0; --j) {
+        const pj = this.permutation[j];
+        let sum = 0;
+        for (let i = j + 1; i < nSing; ++i) {
           sum += this.weightedJacobian[i][pj] * work[i];
         }
         work[j] = (work[j] - sum) / lmDiag[j];
@@ -772,10 +774,10 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
     }
 
     // permute the components of z back to components of lmDir
-    for (var j = 0; j < this.lmDir.length; ++j) {
+    for (let j = 0; j < this.lmDir.length; ++j) {
       this.lmDir[this.permutation[j]] = work[j];
     }
-  }
+  };
 
   /**
    * Decompose a matrix A as A.P = Q.R using Householder transforms.
@@ -801,39 +803,39 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
    * @param jacobian Weighted Jacobian matrix at the current point.
    * @exception ConvergenceException if the decomposition cannot be performed
    */
-  this.qrDecomposition = function (jacobian) {
+  this.qrDecomposition = function (jacobianSource) {
     // Code in this class assumes that the weighted Jacobian is -(W^(1/2) J),
     // hence the multiplication by -1.
-    this.weightedJacobian = this.scalarMultiply(jacobian, -1);
+    this.weightedJacobian = this.scalarMultiply(jacobianSource, -1);
 
-    var nR = this.weightedJacobian.length;
-    var nC = this.weightedJacobian[0].length;
+    const nR = this.weightedJacobian.length;
+    const nC = this.weightedJacobian[0].length;
 
     // initializations
-    for (var k = 0; k < nC; ++k) {
+    for (let k = 0; k < nC; ++k) {
       this.permutation[k] = k;
-      var norm2 = 0;
-      for (var i = 0; i < nR; ++i) {
-        var akk = this.weightedJacobian[i][k];
+      let norm2 = 0;
+      for (let i = 0; i < nR; ++i) {
+        const akk = this.weightedJacobian[i][k];
         norm2 += akk * akk;
       }
       this.jacNorm[k] = Math.sqrt(norm2);
     }
 
     // transform the matrix column after column
-    for (var k = 0; k < nC; ++k) {
+    for (let k = 0; k < nC; ++k) {
 
       // select the column with the greatest norm on active components
-      var nextColumn = -1;
-      var ak2 = Number.NEGATIVE_INFINITY;
-      for (var i = k; i < nC; ++i) {
-        var norm2 = 0;
-        for (var j = k; j < nR; ++j) {
-          var aki = this.weightedJacobian[j][this.permutation[i]];
+      let nextColumn = -1;
+      let ak2 = Number.NEGATIVE_INFINITY;
+      for (let i = k; i < nC; ++i) {
+        let norm2 = 0;
+        for (let j = k; j < nR; ++j) {
+          const aki = this.weightedJacobian[j][this.permutation[i]];
           norm2 += aki * aki;
         }
         if (!isFinite(norm2)) {
-          throw "UNABLE_TO_PERFORM_QR_DECOMPOSITION_ON_JACOBIAN";
+          throw 'UNABLE_TO_PERFORM_QR_DECOMPOSITION_ON_JACOBIAN';
         }
         if (norm2 > ak2) {
           nextColumn = i;
@@ -844,14 +846,14 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
         this.rank = k;
         return;
       }
-      var pk = this.permutation[nextColumn];
+      const pk = this.permutation[nextColumn];
       this.permutation[nextColumn] = this.permutation[k];
       this.permutation[k] = pk;
 
       // choose alpha such that Hk.u = alpha ek
-      var akk = this.weightedJacobian[k][pk];
-      var alpha = (akk > 0) ? -Math.sqrt(ak2) : Math.sqrt(ak2);
-      var betak = 1.0 / (ak2 - akk * alpha);
+      const akk = this.weightedJacobian[k][pk];
+      const alpha = (akk > 0) ? -Math.sqrt(ak2) : Math.sqrt(ak2);
+      const betak = 1.0 / (ak2 - akk * alpha);
       this.beta[pk] = betak;
 
       // transform the current column
@@ -859,19 +861,19 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
       this.weightedJacobian[k][pk] -= alpha;
 
       // transform the remaining columns
-      for (var dk = nC - 1 - k; dk > 0; --dk) {
-        var gamma = 0;
-        for (var j = k; j < nR; ++j) {
+      for (let dk = nC - 1 - k; dk > 0; --dk) {
+        let gamma = 0;
+        for (let j = k; j < nR; ++j) {
           gamma += this.weightedJacobian[j][pk] * this.weightedJacobian[j][this.permutation[k + dk]];
         }
         gamma *= betak;
-        for (var j = k; j < nR; ++j) {
+        for (let j = k; j < nR; ++j) {
           this.weightedJacobian[j][this.permutation[k + dk]] -= gamma * this.weightedJacobian[j][pk];
         }
       }
     }
     this.rank = this.solvedCols;
-  }
+  };
 
   /**
    * Compute the product Qt.y for some Q.R. decomposition.
@@ -879,21 +881,21 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
    * @param y vector to multiply (will be overwritten with the result)
    */
   this.qTy = function (y) {
-    var nR = this.weightedJacobian.length;
-    var nC = this.weightedJacobian[0].length;
+    const nR = this.weightedJacobian.length;
+    const nC = this.weightedJacobian[0].length;
 
-    for (var k = 0; k < nC; ++k) {
-      var pk = this.permutation[k];
-      var gamma = 0;
-      for (var i = k; i < nR; ++i) {
+    for (let k = 0; k < nC; ++k) {
+      const pk = this.permutation[k];
+      let gamma = 0;
+      for (let i = k; i < nR; ++i) {
         gamma += this.weightedJacobian[i][pk] * y[i];
       }
       gamma *= this.beta[pk];
-      for (var i = k; i < nR; ++i) {
+      for (let i = k; i < nR; ++i) {
         y[i] -= gamma * this.weightedJacobian[i][pk];
       }
     }
-  }
+  };
 
   /**
    * Computes the weighted Jacobian matrix.
@@ -908,39 +910,39 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
 
     //TODO: since weighted matrix is always identity return jacobian itself
     return this.jacobian(params);
-  }
+  };
 
   this.scalarMultiply = function (m, s) {
-    var rowCount = m.length;
-    var columnCount = m[0].length;
-    var out = [];
-    for (var row = 0; row < rowCount; ++row) {
+    const rowCount = m.length;
+    const columnCount = m[0].length;
+    const out = [];
+    for (let row = 0; row < rowCount; ++row) {
       out.push([]);
-      for (var col = 0; col < columnCount; ++col) {
+      for (let col = 0; col < columnCount; ++col) {
         out[row].push(m[row][col] * s);
       }
     }
 
     return out;
-  }
+  };
 
   this.operate = function (m, v) {
-    var nRows = m.length;
-    var nCols = m[0].length;
-    if (v.length != nCols) {
-      throw "DimensionMismatchException: " + v.length + "!=" + nCols;
+    const nRows = m.length;
+    const nCols = m[0].length;
+    if (v.length !== nCols) {
+      throw 'DimensionMismatchException: ' + v.length + '!=' + nCols;
     }
-    var out = [];
-    for (var row = 0; row < nRows; row++) {
-      var dataRow = m[row];
-      var sum = 0;
-      for (var i = 0; i < nCols; i++) {
+    const out = [];
+    for (let row = 0; row < nRows; row++) {
+      const dataRow = m[row];
+      let sum = 0;
+      for (let i = 0; i < nCols; i++) {
         sum += dataRow[i] * v[i];
       }
       out[row] = sum;
     }
     return out;
-  }
+  };
 
   /**
    * Computes the cost.
@@ -951,16 +953,16 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
    */
   this.computeCost = function (residuals) {
     return Math.sqrt(this.dotProduct(residuals, this.operate(this.getWeight(), residuals)));
-  }
+  };
 
 
   this.dotProduct = function (v1, v2) {
-    var dot = 0;
-    for (var i = 0; i < v1.length; i++) {
+    let dot = 0;
+    for (let i = 0; i < v1.length; i++) {
       dot += v1[i] * v2[i];
     }
     return dot;
-  }
+  };
 
   /**
    * Gets the root-mean-square (RMS) value.
@@ -975,17 +977,17 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
    */
   this.getRMS = function () {
     return Math.sqrt(this.getChiSquare() / this.target.length);
-  }
+  };
 
   /**
    * Get a Chi-Square-like value assuming the N residuals follow N
-   * distinct normal distributions centered on 0 and whose variances are
+   * distinct normal distributions centered on 0 and whose constiances are
    * the reciprocal of the weights.
    * @return chi-square value
    */
   this.getChiSquare = function () {
     return this.cost * this.cost;
-  }
+  };
 
   /**
    * Gets the square-root of the weight matrix.
@@ -993,12 +995,12 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
    * @return the square-root of the weight matrix.
    */
   this.getWeightSquareRoot = function () {
-    return this.weightMatrixSqrt;//.copy(); FIXME for now it's always identity
-  }
+    return this.weightMatrixSqrt; //.copy(); FIXME for now it's always identity
+  };
 
   this.getWeight = function () {
-    return this.weightMatrix;//.copy(); FIXME for now it's always identity
-  }
+    return this.weightMatrix; //.copy(); FIXME for now it's always identity
+  };
 
   /**
    * Sets the cost.
@@ -1007,7 +1009,7 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
    */
   this.setCost = function (cost) {
     this.cost = cost;
-  }
+  };
 
   /**
    * Computes the residuals.
@@ -1025,24 +1027,23 @@ export default function LMOptimizer(startPoint, target, model, jacobian) {
    * length.
    */
   this.computeResiduals = function (objectiveValue) {
-    var target = this.target;
-    if (objectiveValue.length != target.length) {
-      throw "DimensionMismatchException: " + target.length + " != " + objectiveValue.length;
+    if (objectiveValue.length !== this.target.length) {
+      throw 'DimensionMismatchException: ' + this.target.length + ' != ' + objectiveValue.length;
     }
 
-    var residuals = arr(target.length);
-    for (var i = 0; i < target.length; i++) {
-      residuals[i] = target[i] - objectiveValue[i];
+    const residuals = arr(this.target.length);
+    for (let i = 0; i < this.target.length; i++) {
+      residuals[i] = this.target[i] - objectiveValue[i];
     }
 
     return residuals;
-  }
+  };
 
   this.computeObjectiveValue = function (params) {
     if (++this.evalCount > this.evalMaximalCount) {
-      throw "TOO MANY FUNCTION EVALUATION"
+      throw 'TOO MANY FUNCTION EVALUATION';
     }
     return this.model(params);
-  }
+  };
 
 }

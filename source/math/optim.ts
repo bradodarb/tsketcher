@@ -1,41 +1,50 @@
 //declare const numeric: any;
-import * as numeric from 'numeric'
-import { _vec, _matrix } from './math'
+import * as numeric from 'numeric';
+import { _vec, _matrix } from './math';
 
 
 //Added strong wolfe condition to numeric's uncmin
-var bfgs_ = function (f, x0, tol = 1e-8, gradient, maxit = 1000, callback, options: any = {}) {
-  var grad = numeric.gradient;
+const bfgs_ = function (f, x0, tol = 1e-8, gradient, maxit = 1000, callback, options: any = {}) {
+  const grad = numeric.gradient;
 
-  if (typeof gradient === "undefined") {
+  if (typeof gradient === 'undefined') {
     gradient = function (x) { return grad(f, x); };
   }
 
   x0 = numeric.clone(x0);
-  var n = x0.length;
-  var f0 = f(x0), f1, df0;
-  if (isNaN(f0)) throw new Error('uncmin: f(x0) is a NaN!');
-  var max = Math.max, norm2 = numeric.norm2;
+  const n = x0.length;
+  let f0 = f(x0), f1;
+  if (isNaN(f0)) {
+    throw new Error('uncmin: f(x0) is a NaN!');
+  }
+  const max = Math.max, norm2 = numeric.norm2;
   tol = max(tol, numeric.epsilon);
-  var step, g0, g1, H1 = options.Hinv || numeric.identity(n);
-  var dot = numeric.dot, inv = numeric.inv, sub = numeric.sub, add = numeric.add, ten = numeric.tensor, div = numeric.div, mul = numeric.mul;
-  var all = numeric.all, isfinite = numeric.isFinite, neg = numeric.neg;
-  var it = 0, i, s, x1, y, Hy, Hs, ys, i0, t, nstep, t1, t2;
-  var msg = "";
+  let step, g0, nstep, df0, x1, t;
+  let g1, H1 = options.Hinv || numeric.identity(n);
+  let dot = numeric.dot, sub = numeric.sub,
+    add = numeric.add, ten = numeric.tensor,
+    div = numeric.div, mul = numeric.mul;
+  let all = numeric.all, isfinite = numeric.isFinite, neg = numeric.neg;
+  let it = 0, s, y, Hy, ys;
+  let msg = '';
   g0 = gradient(x0);
   while (it < maxit) {
-    if (typeof callback === "function") { if (callback(it, x0, f0, g0, H1)) { msg = "Callback returned true"; break; } }
-    if (!all(isfinite(g0))) { msg = "Gradient has Infinity or NaN"; break; }
+    if (typeof callback === 'function') {
+      if (callback(it, x0, f0, g0, H1)) {
+        msg = 'Callback returned true'; break;
+      }
+    }
+    if (!all(isfinite(g0))) { msg = 'Gradient has Infinity or NaN'; break; }
     step = neg(dot(H1, g0));
-    if (!all(isfinite(step))) { msg = "Search direction has Infinity or NaN"; break; }
+    if (!all(isfinite(step))) { msg = 'Search direction has Infinity or NaN'; break; }
     nstep = norm2(step);
-    if (nstep < tol) { msg = "Newton step smaller than tol"; break; }
+    if (nstep < tol) { msg = 'Newton step smaller than tol'; break; }
     t = 1;
     df0 = dot(g0, step);
     // line search
     x1 = x0;
-    var tL = 0;
-    var tR = 100;
+    let tL = 0;
+    let tR = 100;
     while (it < maxit) {
       if (t * nstep < tol) { break; }
       s = mul(step, t);
@@ -47,7 +56,7 @@ var bfgs_ = function (f, x0, tol = 1e-8, gradient, maxit = 1000, callback, optio
         t = (tL + tR) * 0.5;
         ++it;
       } else {
-        var slope = dot(gradient(x1), step);
+        const slope = dot(gradient(x1), step);
         if (slope <= 0.9 * Math.abs(df0)) {
           break;
         } else if (slope >= 0.9 * df0) {
@@ -59,8 +68,8 @@ var bfgs_ = function (f, x0, tol = 1e-8, gradient, maxit = 1000, callback, optio
         }
       }
     }
-    if (t * nstep < tol) { msg = "Line search step size smaller than tol"; break; }
-    if (it === maxit) { msg = "maxit reached during line search"; break; }
+    if (t * nstep < tol) { msg = 'Line search step size smaller than tol'; break; }
+    if (it === maxit) { msg = 'maxit reached during line search'; break; }
     g1 = gradient(x1);
     y = sub(g1, g0);
     ys = dot(y, s);
@@ -81,31 +90,31 @@ var bfgs_ = function (f, x0, tol = 1e-8, gradient, maxit = 1000, callback, optio
 };
 
 //https://en.wikipedia.org/wiki/Broyden%E2%80%93Fletcher%E2%80%93Goldfarb%E2%80%93Shanno_algorithm
-var bfgs = function (f, x0, tol, gradient, maxit, callback, options) {
-  var grad = numeric.gradient;
-  if (typeof options === "undefined") { options = {}; }
-  if (typeof tol === "undefined") { tol = 1e-8; }
-  if (typeof gradient === "undefined") { gradient = function (x) { return grad(f, x); }; }
-  if (typeof maxit === "undefined") maxit = 1000;
+const bfgs = function (f, x0, tol, gradient, maxit, callback, options) {
+  const grad = numeric.gradient;
+  if (typeof options === 'undefined') { options = {}; }
+  if (typeof tol === 'undefined') { tol = 1e-8; }
+  if (typeof gradient === 'undefined') { gradient = function (x) { return grad(f, x); }; }
+  if (typeof maxit === 'undefined') maxit = 1000;
   x0 = numeric.clone(x0);
-  var n = x0.length;
-  var f0 = f(x0), f1, df0;
+  const n = x0.length;
+  const f0 = f(x0), f1, df0;
   if (isNaN(f0)) throw new Error('uncmin: f(x0) is a NaN!');
-  var max = Math.max, norm2 = numeric.norm2;
+  const max = Math.max, norm2 = numeric.norm2;
   tol = max(tol, numeric.epsilon);
-  var step, g0, g1, H1 = options.Hinv || numeric.identity(n);
-  var dot = numeric.dot, inv = numeric.inv, sub = numeric.sub, add = numeric.add, ten = numeric.tensor, div = numeric.div, mul = numeric.mul;
-  var all = numeric.all, isfinite = numeric.isFinite, neg = numeric.neg;
-  var it = 0, i, s, x1, y, Hy, Hs, ys, i0, t, nstep, t1, t2;
-  var msg = "";
+  const step, g0, g1, H1 = options.Hinv || numeric.identity(n);
+  const dot = numeric.dot, inv = numeric.inv, sub = numeric.sub, add = numeric.add, ten = numeric.tensor, div = numeric.div, mul = numeric.mul;
+  const all = numeric.all, isfinite = numeric.isFinite, neg = numeric.neg;
+  const it = 0, i, s, x1, y, Hy, Hs, ys, i0, t, nstep, t1, t2;
+  const msg = '';
   g0 = gradient(x0);
   while (it < maxit) {
-    if (typeof callback === "function") { if (callback(it, x0, f0, g0, H1)) { msg = "Callback returned true"; break; } }
-    if (!all(isfinite(g0))) { msg = "Gradient has Infinity or NaN"; break; }
+    if (typeof callback === 'function') { if (callback(it, x0, f0, g0, H1)) { msg = 'Callback returned true'; break; } }
+    if (!all(isfinite(g0))) { msg = 'Gradient has Infinity or NaN'; break; }
     step = neg(dot(H1, g0));
-    if (!all(isfinite(step))) { msg = "Search direction has Infinity or NaN"; break; }
+    if (!all(isfinite(step))) { msg = 'Search direction has Infinity or NaN'; break; }
     nstep = norm2(step);
-    if (nstep < tol) { msg = "Newton step smaller than tol"; break; }
+    if (nstep < tol) { msg = 'Newton step smaller than tol'; break; }
 
     df0 = dot(g0, step);
     // line search
@@ -115,13 +124,13 @@ var bfgs = function (f, x0, tol, gradient, maxit, callback, options) {
     t2 = 1.0;
     s = mul(step, t2);
     x1 = add(x0, s);
-    var f2 = f(x1);
+    const f2 = f(x1);
 
-    var t3 = 2.0;
+    const t3 = 2.0;
     s = mul(step, t3);
     x1 = add(x0, s);
-    var f3 = f(x1);
-    var tMax = 1e23;
+    const f3 = f(x1);
+    const tMax = 1e23;
 
     while ((f2 > f1 || f2 > f3) && it < maxit) {
       if (t * nstep < tol) { break; }
@@ -153,7 +162,7 @@ var bfgs = function (f, x0, tol, gradient, maxit, callback, options) {
     }
 
     //Get the alpha for the minimum f of the quadratic approximation
-    var ts = t2 + ((t2 - t1) * (f1 - f3)) / (3 * (f1 - 2 * f2 + f3));
+    const ts = t2 + ((t2 - t1) * (f1 - f3)) / (3 * (f1 - 2 * f2 + f3));
 
     //Guarantee that the new alphaStar is within the bracket
     if (ts >= t3 || ts <= t1)
@@ -171,8 +180,8 @@ var bfgs = function (f, x0, tol, gradient, maxit, callback, options) {
     f1 = f(x1);
 
 
-    if (t * nstep < tol) { msg = "Line search step size smaller than tol"; break; }
-    if (it === maxit) { msg = "maxit reached during line search"; break; }
+    if (t * nstep < tol) { msg = 'Line search step size smaller than tol'; break; }
+    if (it === maxit) { msg = 'maxit reached during line search'; break; }
     g1 = gradient(x1);
     y = sub(g1, g0);
     ys = dot(y, s);
@@ -192,14 +201,14 @@ var bfgs = function (f, x0, tol, gradient, maxit, callback, options) {
   return { solution: x0, f: f0, gradient: g0, invHessian: H1, iterations: it, message: msg };
 };
 
-var bfgs_updater = function (gradient, x0) {
-  var n = x0.length;
-  var max = Math.max, norm2 = numeric.norm2;
-  var g0, g1, H1 = numeric.identity(n);
-  var dot = numeric.dot, inv = numeric.inv, sub = numeric.sub, add = numeric.add, ten = numeric.tensor, div = numeric.div, mul = numeric.mul;
-  var all = numeric.all, isfinite = numeric.isFinite, neg = numeric.neg;
-  var y, Hy, Hs, ys;
-  var msg = "";
+const bfgs_updater = function (gradient, x0) {
+  const n = x0.length;
+  const max = Math.max, norm2 = numeric.norm2;
+  const g0, g1, H1 = numeric.identity(n);
+  const dot = numeric.dot, inv = numeric.inv, sub = numeric.sub, add = numeric.add, ten = numeric.tensor, div = numeric.div, mul = numeric.mul;
+  const all = numeric.all, isfinite = numeric.isFinite, neg = numeric.neg;
+  const y, Hy, Hs, ys;
+  const msg = '';
   g0 = gradient(x0);
 
   function step() {
@@ -207,7 +216,7 @@ var bfgs_updater = function (gradient, x0) {
   }
 
   function update(x, real_step) {
-    var s = real_step;
+    const s = real_step;
 
     g1 = gradient(x);
     y = sub(g1, g0);
@@ -225,21 +234,21 @@ var bfgs_updater = function (gradient, x0) {
   return { step: step, update: update };
 };
 
-var inv = function inv(A) {
+const inv = function inv(A) {
   A = numeric.clone(A);
-  var s = numeric.dim(A), abs = Math.abs, m = s[0], n = s[1];
-  var Ai, Aj;
-  var I = numeric.identity(m), Ii, Ij;
-  var i, j, k, x;
+  const s = numeric.dim(A), abs = Math.abs, m = s[0], n = s[1];
+  const Ai, Aj;
+  const I = numeric.identity(m), Ii, Ij;
+  const i, j, k, x;
   for (j = 0; j < n; ++j) {
-    var i0 = -1;
-    var v0 = -1;
+    const i0 = -1;
+    const v0 = -1;
     for (i = j; i !== m; ++i) { k = abs(A[i][j]); if (k > v0) { i0 = i; v0 = k; } }
     Aj = A[i0]; A[i0] = A[j]; A[j] = Aj;
     Ij = I[i0]; I[i0] = I[j]; I[j] = Ij;
     x = Aj[j];
     if (x === 0) {
-      console.log("CAN' INVERSE MATRIX");
+      console.log('CAN' INVERSE MATRIX');
       x = 1e-32
     }
     for (k = j; k !== n; ++k)    Aj[k] /= x;
@@ -258,16 +267,16 @@ var inv = function inv(A) {
   return I;
 };
 
-var _result = function (evalCount, error, returnCode) {
+const _result = function (evalCount, error, returnCode) {
   this.evalCount = evalCount;
   this.error = error;
   this.returnCode = returnCode;
 };
 
-var dog_leg = function (subsys, rough) {
+const dog_leg = function (subsys, rough) {
   //rough = true
-  //var tolg = rough ? 1e-3 : 1e-4;
-  var tolg, tolf;
+  //const tolg = rough ? 1e-3 : 1e-4;
+  const tolg, tolf;
   if (rough) {
     tolg = 1e-3;
     tolf = 1e-3;
@@ -276,64 +285,64 @@ var dog_leg = function (subsys, rough) {
     tolf = 1e-6;
   }
 
-  var tolx = 1e-80;
+  const tolx = 1e-80;
 
-  var xsize = subsys.params.length;
-  var csize = subsys.constraints.length;
+  const xsize = subsys.params.length;
+  const csize = subsys.constraints.length;
 
   if (xsize == 0) {
     return new _result(0, 0, 1);
   }
 
-  var vec = _vec;
-  var mx = _matrix;
+  const vec = _vec;
+  const mx = _matrix;
 
-  var n = numeric;
+  const n = numeric;
 
-  var x = vec(xsize);
-  var x_new = vec(xsize);
+  const x = vec(xsize);
+  const x_new = vec(xsize);
 
-  var fx = vec(csize);
-  var fx_new = vec(csize);
+  const fx = vec(csize);
+  const fx_new = vec(csize);
 
-  var J = mx(csize, xsize);
-  var J_new = mx(csize, xsize);
-  var gn_step = vec(xsize);
-  var dl_step = vec(xsize);
+  const J = mx(csize, xsize);
+  const J_new = mx(csize, xsize);
+  const gn_step = vec(xsize);
+  const dl_step = vec(xsize);
 
   subsys.fillParams(x);
-  var err = subsys.calcResidual(fx);
+  const err = subsys.calcResidual(fx);
   subsys.fillJacobian(J);
 
   function lsolve_slow(A, b) {
-    var At = n.transpose(A);
-    var res = n.dot(n.dot(At, inv(n.dot(A, At))), b);
+    const At = n.transpose(A);
+    const res = n.dot(n.dot(At, inv(n.dot(A, At))), b);
     return res;
   }
 
   function lsolve(A, b) {
     if (csize < xsize) {
-      var At = n.transpose(A);
-      var sol = n.solve(n.dot(A, At), b, true);
+      const At = n.transpose(A);
+      const sol = n.solve(n.dot(A, At), b, true);
       return n.dot(At, sol);
     } else {
       return n.solve(A, b, false);
     }
   }
 
-  var g = n.dot(n.transpose(J), fx);
-  var g_inf = n.norminf(g);
-  var fx_inf = n.norminf(fx);
+  const g = n.dot(n.transpose(J), fx);
+  const g_inf = n.norminf(g);
+  const fx_inf = n.norminf(fx);
 
-  var iterLimit = 100;
-  var divergenceLimit = 1e6 * (err + 1e6);
+  const iterLimit = 100;
+  const divergenceLimit = 1e6 * (err + 1e6);
 
-  var delta = 10;
-  var alpha = 0.;
-  var iter = 0, returnCode = 0;
-  //var log = [];
+  const delta = 10;
+  const alpha = 0.;
+  const iter = 0, returnCode = 0;
+  //const log = [];
 
-  var SUCCESS = 1, ITER_LIMIT = 2, SMALL_DELTA = 3, SMALL_STEP = 4, DIVERGENCE = 5, INVALID_STATE = 6;
+  const SUCCESS = 1, ITER_LIMIT = 2, SMALL_DELTA = 3, SMALL_STEP = 4, DIVERGENCE = 5, INVALID_STATE = 6;
 
   while (returnCode === 0) {
     optim.DEBUG_HANDLER(iter, err);
@@ -369,35 +378,35 @@ var dog_leg = function (subsys, rough) {
     //solve linear problem using svd formula to get the gauss-newton step
     //gn_step = lls(J, n.mul(fx, -1));
 
-    var hitBoundary = false;
+    const hitBoundary = false;
 
-    var gnorm = n.norm2(g);
-    var gnNorm = n.norm2(gn_step);
+    const gnorm = n.norm2(g);
+    const gnNorm = n.norm2(gn_step);
     if (gnNorm < delta) {
       dl_step = gn_step;
     } else {
-      var Jt = n.transpose(J);
-      var B = n.dot(Jt, J);
-      var gBg = n.dot(g, n.dot(B, g));
+      const Jt = n.transpose(J);
+      const B = n.dot(Jt, J);
+      const gBg = n.dot(g, n.dot(B, g));
       alpha = n.norm2Squared(g) / gBg;
       if (alpha * gnorm >= delta) {
         dl_step = n.mul(g, - delta / gnorm);
         hitBoundary = true;
       } else {
-        var sd_step = n.mul(g, - alpha);
+        const sd_step = n.mul(g, - alpha);
         if (isNaN(gnNorm)) {
           dl_step = sd_step;
         } else {
 
-          var d = n.sub(gn_step, sd_step);
+          const d = n.sub(gn_step, sd_step);
 
-          var a = n.dot(d, d);
-          var b = 2 * n.dot(sd_step, d);
-          var c = n.dot(sd_step, sd_step) - delta * delta;
+          const a = n.dot(d, d);
+          const b = 2 * n.dot(sd_step, d);
+          const c = n.dot(sd_step, sd_step) - delta * delta;
 
-          var sqrt_discriminant = Math.sqrt(b * b - 4 * a * c);
+          const sqrt_discriminant = Math.sqrt(b * b - 4 * a * c);
 
-          var beta = (-b + sqrt_discriminant) / (2 * a);
+          const beta = (-b + sqrt_discriminant) / (2 * a);
 
           dl_step = n.add(sd_step, n.mul(beta, d));
           hitBoundary = true;
@@ -405,7 +414,7 @@ var dog_leg = function (subsys, rough) {
       }
     }
 
-    var dl_norm = n.norm2(dl_step);
+    const dl_norm = n.norm2(dl_step);
 
     //    if (dl_norm <= tolx) {
     //      returnCode = SMALL_STEP;
@@ -414,19 +423,19 @@ var dog_leg = function (subsys, rough) {
 
     x_new = n.add(x, dl_step);
     subsys.setParams(x_new);
-    var err_new = subsys.calcResidual(fx_new);
+    const err_new = subsys.calcResidual(fx_new);
     subsys.fillJacobian(J_new);
 
-    var fxNormSq = n.norm2Squared(fx);
-    var dF = fxNormSq - n.norm2Squared(fx_new);
-    var dL = fxNormSq - n.norm2Squared(n.add(fx, n.dot(J, dl_step)));
+    const fxNormSq = n.norm2Squared(fx);
+    const dF = fxNormSq - n.norm2Squared(fx_new);
+    const dL = fxNormSq - n.norm2Squared(n.add(fx, n.dot(J, dl_step)));
 
-    var acceptCandidate;
+    const acceptCandidate;
 
     if (dF == 0 || dL == 0) {
       acceptCandidate = true;
     } else {
-      var rho = dF / dL;
+      const rho = dF / dL;
       if (rho < 0.25) {
         // if the model is a poor predictor reduce the size of the trust region
         delta = 0.25 * dl_norm;
@@ -463,28 +472,28 @@ var dog_leg = function (subsys, rough) {
   return new _result(iter, err, returnCode);
 };
 
-var cg = function (A, x, b, tol, maxIt) {
+const cg = function (A, x, b, tol, maxIt) {
 
-  var _ = numeric;
+  const _ = numeric;
 
-  var tr = _.transpose;
-  var At = tr(A);
+  const tr = _.transpose;
+  const At = tr(A);
   if (A.length != A[0].length) {
     A = _.dot(At, A);
     b = _.dot(At, b);
   }
 
-  var r = _.sub(_.dot(A, x), b);
-  var p = _.mul(r, -1);
-  var rr = _.dotVV(r, r);
+  const r = _.sub(_.dot(A, x), b);
+  const p = _.mul(r, -1);
+  const rr = _.dotVV(r, r);
 
-  var a;
-  var _rr;
-  var beta;
+  const a;
+  const _rr;
+  const beta;
 
-  for (var i = 0; i < maxIt; ++i) {
+  for (const i = 0; i < maxIt; ++i) {
     if (_.norm2(r) <= tol) break;
-    var Axp = _.dot(A, p);
+    const Axp = _.dot(A, p);
     a = rr / _.dotVV(Axp, p);
     x = _.add(x, _.mul(p, a));
     r = _.add(r, _.mul(Axp, a));
@@ -493,10 +502,10 @@ var cg = function (A, x, b, tol, maxIt) {
     beta = rr / _rr;
     p = _.add(_.mul(r, -1), _.mul(p, beta));
   }
-  //  console.log("liner problem solved in " + i);
+  //  console.log('liner problem solved in ' + i);
   return x;
 };
 
-var optim = { DEBUG_HANDLER: function (index: any, child: any) { } }; //backward compatibility
+const optim = { DEBUG_HANDLER: function (index: any, child: any) { } }; //backward compatibility
 
 export { dog_leg, optim }

@@ -1,8 +1,8 @@
 export default class LayerStyle {
 
-  public lineWidth: number = 1;
-  public strokeStyle: string = '#ffffff';
-  public fillStyle: string = '#ffffff';
+  public lineWidth = 1;
+  public strokeStyle = '#ffffff';
+  public fillStyle = '#ffffff';
 
 
   constructor(width: number, stroke: string, fill: string) {

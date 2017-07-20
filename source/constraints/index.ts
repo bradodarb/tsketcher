@@ -1,7 +1,3 @@
-import * as utils from '../util'
-import { Ref } from './reference'
-import { SketchObject } from '../geometry/render-models';
-import { Param, prepare } from './solver'
 import { Constraint } from './object-models/base.constraint-model';
 import { Coincident } from './object-models/coincident.constraint-model';
 import { RadiusOffset } from './object-models/radius-offset.constraint-model';
@@ -34,174 +30,175 @@ import { LockConvex } from './object-models/lock-convexity.constraint-model';
 import { SubSystem } from './subsystem';
 
 
-const Factory = {};
+class Factory {
 
-// ------------------------------------------------------------------------------------------------------------------ //
 
-Factory['coi'] = function (refs, data) {
-  return new Coincident(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['RadiusOffset'] = function (refs, data) {
-  return new RadiusOffset(refs(data[0]), refs(data[1]), data[2]);
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['lock'] = function (refs, data) {
-  return new Lock(refs(data[0]), data[1]);
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['parallel'] = function (refs, data) {
-  return new Parallel(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['perpendicular'] = function (refs, data) {
-  return new Perpendicular(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['P2LDistanceSigned'] = function (refs, data) {
-  return new P2LDistanceSigned(refs(data[0]), refs(data[1]), refs(data[2]), data[3]);
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['P2LDistance'] = function (refs, data) {
-  return new P2LDistance(refs(data[0]), refs(data[1]), data[2]);
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['MinLength'] = function (refs, data) {
-  return new MinLength(refs(data[0]), refs(data[1]), data[2]);
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['P2LDistanceV'] = function (refs, data) {
-  return new P2LDistanceV(refs(data[0]), refs(data[1]), data[2]);
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['P2PDistance'] = function (refs, data) {
-  return new P2PDistance(refs(data[0]), refs(data[1]), data[2]);
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['P2PDistanceV'] = function (refs, data) {
-  return new P2PDistanceV(refs(data[0]), refs(data[1]), data[2]);
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['GreaterThan'] = function (refs, data) {
-  return new GreaterThan(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['Radius'] = function (refs, data) {
-  return new Radius(refs(data[0]), data[1]);
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['RR'] = function (refs, data) {
-  return new RadiusEquality(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['LL'] = function (refs, data) {
-  return new LineEquality(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['Vertical'] = function (refs, data) {
-  return new Vertical(refs(data[0]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['Horizontal'] = function (refs, data) {
-  return new Horizontal(refs(data[0]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['Tangent'] = function (refs, data) {
-  return new Tangent(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['PointOnLine'] = function (refs, data) {
-  return new PointOnLine(refs(data[0]), refs(data[1]));
-};
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['PointOnArc'] = function (refs, data) {
-  return new PointOnArc(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['PointOnEllipseInternal'] = function (refs, data) {
-  return new PointOnEllipseInternal(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['PointOnEllipse'] = function (refs, data) {
-  return new PointOnEllipse(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['EllipseTangent'] = function (refs, data) {
-  return new EllipseTangent(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['PointInMiddle'] = function (refs, data) {
-  return new PointInMiddle(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['Symmetry'] = function (refs, data) {
-  return new Symmetry(refs(data[0]), refs(data[1]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['Angle'] = function (refs, data) {
-  return new Angle(refs(data[0]), refs(data[1]), refs(data[2]), refs(data[3]), data[4]);
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
-
-Factory['LockConvex'] = function (refs, data) {
-  return new LockConvex(refs(data[0]), refs(data[1]), refs(data[2]));
-};
-
-// ------------------------------------------------------------------------------------------------------------------ //
+  public static Coincident(refs, data) {
+    return new Coincident(refs(data[0]), refs(data[1]));
+  }
 
 
 
+  public static RadiusOffset(refs, data) {
+    return new RadiusOffset(refs(data[0]), refs(data[1]), data[2]);
+  }
+
+
+
+  public static Lock(refs, data) {
+    return new Lock(refs(data[0]), data[1]);
+  }
+
+
+
+  public static Parallel(refs, data) {
+    return new Parallel(refs(data[0]), refs(data[1]));
+  }
+
+
+
+  public static Perpendicular(refs, data) {
+    return new Perpendicular(refs(data[0]), refs(data[1]));
+  }
+
+
+
+  public static P2LDistanceSigned(refs, data) {
+    return new P2LDistanceSigned(refs(data[0]), refs(data[1]), refs(data[2]), data[3]);
+  }
+
+
+
+  public static P2LDistance(refs, data) {
+    return new P2LDistance(refs(data[0]), refs(data[1]), data[2]);
+  }
+
+
+
+  public static MinLength(refs, data) {
+    return new MinLength(refs(data[0]), refs(data[1]), data[2]);
+  }
+
+
+
+  public static P2LDistanceV(refs, data) {
+    return new P2LDistanceV(refs(data[0]), refs(data[1]), data[2]);
+  }
+
+
+
+  public static P2PDistance(refs, data) {
+    return new P2PDistance(refs(data[0]), refs(data[1]), data[2]);
+  }
+
+
+
+  public static P2PDistanceV(refs, data) {
+    return new P2PDistanceV(refs(data[0]), refs(data[1]), data[2]);
+  }
+
+
+
+  public static GreaterThan(refs, data) {
+    return new GreaterThan(refs(data[0]), refs(data[1]));
+  }
+
+
+
+  public static Radius(refs, data) {
+    return new Radius(refs(data[0]), data[1]);
+  }
+
+
+
+  public static RR(refs, data) {
+    return new RadiusEquality(refs(data[0]), refs(data[1]));
+  }
+
+
+
+  public static LL(refs, data) {
+    return new LineEquality(refs(data[0]), refs(data[1]));
+  }
+
+
+
+  public static Vertical(refs, data) {
+    return new Vertical(refs(data[0]));
+  }
+
+
+
+  public static Horizontal(refs, data) {
+    return new Horizontal(refs(data[0]));
+  }
+
+
+
+  public static Tangent(refs, data) {
+    return new Tangent(refs(data[0]), refs(data[1]));
+  }
+
+
+
+  public static PointOnLine(refs, data) {
+    return new PointOnLine(refs(data[0]), refs(data[1]));
+  }
+
+
+  public static PointOnArc(refs, data) {
+    return new PointOnArc(refs(data[0]), refs(data[1]));
+  }
+
+
+
+  public static PointOnEllipseInternal(refs, data) {
+    return new PointOnEllipseInternal(refs(data[0]), refs(data[1]));
+  }
+
+
+
+  public static PointOnEllipse(refs, data) {
+    return new PointOnEllipse(refs(data[0]), refs(data[1]));
+  }
+
+
+
+  public static EllipseTangent(refs, data) {
+    return new EllipseTangent(refs(data[0]), refs(data[1]));
+  }
+
+
+
+  public static PointInMiddle(refs, data) {
+    return new PointInMiddle(refs(data[0]), refs(data[1]));
+  }
+
+
+
+  public static Symmetry(refs, data) {
+    return new Symmetry(refs(data[0]), refs(data[1]));
+  }
+
+
+
+  public static Angle(refs, data) {
+    return new Angle(refs(data[0]), refs(data[1]), refs(data[2]), refs(data[3]), data[4]);
+  }
+
+
+
+  public static LockConvex(refs, data) {
+    return new LockConvex(refs(data[0]), refs(data[1]), refs(data[2]));
+  }
+
+
+
+
+
+}
 export {
+  Factory,
   SubSystem,
   Constraint,
   Coincident,
@@ -231,4 +228,4 @@ export {
   Symmetry,
   Angle,
   LockConvex
-}
+};

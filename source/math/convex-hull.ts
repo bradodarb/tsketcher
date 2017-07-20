@@ -1,6 +1,6 @@
 export function ConvexHull2D(points) {
   points.sort(function (a, b) {
-    return a.x != b.x ? a.x - b.x : a.y - b.y;
+    return a.x !== b.x ? a.x - b.x : a.y - b.y;
   });
 
   const n = points.length;
@@ -18,7 +18,7 @@ export function ConvexHull2D(points) {
 }
 
 function removeMiddle(a, b, c) {
-  var cross = (a.x - b.x) * (c.y - b.y) - (a.y - b.y) * (c.x - b.x);
-  var dot = (a.x - b.x) * (c.x - b.x) + (a.y - b.y) * (c.y - b.y);
-  return cross < 0 || cross == 0 && dot <= 0;
+  const cross = (a.x - b.x) * (c.y - b.y) - (a.y - b.y) * (c.x - b.x);
+  const dot = (a.x - b.x) * (c.x - b.x) + (a.y - b.y) * (c.y - b.y);
+  return cross < 0 || cross === 0 && dot <= 0;
 }

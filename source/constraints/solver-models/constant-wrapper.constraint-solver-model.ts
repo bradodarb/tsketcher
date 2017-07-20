@@ -1,9 +1,9 @@
-import { ConstraintResolver } from './base.constraint-solver-model'
+import { ConstraintResolver } from './base.constraint-solver-model';
 
 
 import {
   fillArray
-} from '../../util'
+} from '../../util';
 
 export class ConstantWrapper extends ConstraintResolver {
 
@@ -28,7 +28,7 @@ export class ConstantWrapper extends ConstraintResolver {
   public gradient(out: Array<number>): void {
     fillArray(this.grad, 0, this.grad.length, 0);
     this.constr.gradient(this.grad);
-    var jj = 0;
+    let jj = 0;
     for (let j = 0; j < this.mask.length; j++) {
       if (!this.mask[j]) {
         out[jj++] = this.grad[j];

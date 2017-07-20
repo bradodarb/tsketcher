@@ -1,5 +1,5 @@
 export function isEndPoint(o) {
-  return o.className === 'M4CAD.TWO.EndPoint'
+  return o.className === 'M4CAD.TWO.EndPoint';
 }
 
 export function DrawPoint(ctx, x, y, rad, scale) {
@@ -13,7 +13,9 @@ export function equalizeLinkedEndpoints() {
   const visited = new Set();
 
   function equalize(obj) {
-    if (visited.has(obj.id)) return;
+    if (visited.has(obj.id)) {
+      return;
+    }
     visited.add(obj.id);
     for (let link of obj.linked) {
       if (isEndPoint(link)) {

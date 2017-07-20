@@ -15,7 +15,7 @@ export class MinLength extends Constraint {
   }
 
   public getSolveData() {
-    var params = [];
+    let params = [];
     this.a.collectParams(params);
     this.b.collectParams(params);
     return [[this.NAME, params, [this.min]]];

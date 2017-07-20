@@ -1,7 +1,6 @@
-import * as utils from '../../util';
 import { getTextOffset } from '../utils';
 import * as math from '../../math/math';
-import Vector from '../../math/vector'
+import Vector from '../../math/vector';
 import { SketchObject } from './sketch-shape.render-model';
 import { Viewport2d } from '../../viewport';
 
@@ -19,6 +18,7 @@ export class LinearDimension extends SketchObject {
   }
 
   public collectParams(params) {
+    return undefined;
   }
 
   public getReferencePoint() {
@@ -27,15 +27,15 @@ export class LinearDimension extends SketchObject {
 
 
 
-  public getA() { return this.a }
-  public getB() { return this.b }
+  public getA() { return this.a; }
+  public getB() { return this.b; }
 
   public drawSelf(viewer: Viewport2d) {
 
-    var off = 30 * viewer.dimScale;
-    var textOff = getTextOffset(viewer.dimScale);
+    const off = 30 * viewer.dimScale;
+    const textOff = getTextOffset(viewer.dimScale);
 
-    var a, b, startA, startB;
+    let a, b, startA, startB;
     if (this.flip) {
       a = this.getB();
       b = this.getA();
@@ -48,31 +48,31 @@ export class LinearDimension extends SketchObject {
       startB = this.b;
     }
 
-    var d = math.distanceAB(a, b);
+    const d = math.distanceAB(a, b);
 
-    var _vx = - (b.y - a.y);
-    var _vy = b.x - a.x;
+    let _vx = - (b.y - a.y);
+    let _vy = b.x - a.x;
 
     //normalize
-    var _vxn = _vx / d;
-    var _vyn = _vy / d;
+    const _vxn = _vx / d;
+    const _vyn = _vy / d;
 
     _vx = _vxn * off;
     _vy = _vyn * off;
 
     viewer.context.beginPath();
 
-    var _ax = a.x + _vx;
-    var _ay = a.y + _vy;
-    var _bx = b.x + _vx;
-    var _by = b.y + _vy;
+    const _ax = a.x + _vx;
+    const _ay = a.y + _vy;
+    const _bx = b.x + _vx;
+    const _by = b.y + _vy;
 
     viewer.context.moveTo(_ax, _ay);
     viewer.context.lineTo(_bx, _by);
 
 
     function drawRef(start, x, y) {
-      var vec = new Vector(x - start.x, y - start.y);
+      const vec = new Vector(x - start.x, y - start.y);
       vec._normalize();
       vec._multiply(7 * viewer.dimScale);
 
@@ -88,8 +88,8 @@ export class LinearDimension extends SketchObject {
     viewer.context.stroke();
 
     function drawArrow(x, y) {
-      var s1 = 50;
-      var s2 = 20;
+      const s1 = 50;
+      const s2 = 20;
       viewer.context.lineCap = 'round';
       viewer.context.beginPath();
       viewer.context.moveTo(x, y);
@@ -98,16 +98,16 @@ export class LinearDimension extends SketchObject {
       viewer.context.stroke();
     }
 
-    //  drawArrow(_ax, _ay);
-    //  drawArrow(_bx, _by);
+    drawArrow(_ax, _ay);
+    drawArrow(_bx, _by);
 
-    viewer.context.font = (12 * viewer.dimScale) + "px Arial";
-    var txt = d.toFixed(2);
-    var h = d / 2 - viewer.context.measureText(txt).width / 2;
+    viewer.context.font = (12 * viewer.dimScale) + 'px Arial';
+    const txt = d.toFixed(2);
+    const h = d / 2 - viewer.context.measureText(txt).width / 2;
 
     if (h > 0) {
-      var tx = (_ax + _vxn * textOff) - (- _vyn) * h;
-      var ty = (_ay + _vyn * textOff) - (_vxn) * h;
+      const tx = (_ax + _vxn * textOff) - (- _vyn) * h;
+      const ty = (_ay + _vyn * textOff) - (_vxn) * h;
       viewer.context.save();
       viewer.context.translate(tx, ty);
       viewer.context.rotate(- Math.atan2(_vxn, _vyn));
@@ -117,7 +117,7 @@ export class LinearDimension extends SketchObject {
     }
   }
 
-  normalDistance(aim) {
+  public normalDistance(aim) {
     return -1;
   }
 }

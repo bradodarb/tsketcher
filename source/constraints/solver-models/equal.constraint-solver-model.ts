@@ -1,4 +1,4 @@
-import { ConstraintResolver } from './base.constraint-solver-model'
+import { ConstraintResolver } from './base.constraint-solver-model';
 
 
 export class Equal extends ConstraintResolver {

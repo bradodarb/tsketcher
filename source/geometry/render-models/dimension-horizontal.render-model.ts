@@ -1,8 +1,4 @@
-import * as utils from '../../util';
-import * as math from '../../math/math';
-import Vector from '../../math/vector'
 import { LinearDimension } from './dimension-linear.render-model';
-import { SketchObject } from './sketch-shape.render-model';
 
 
 
@@ -11,11 +7,11 @@ export class HorizontalDimension extends LinearDimension {
     super(a, b, 'M4CAD.TWO.HDimension');
   }
 
-  getA() {
+  public getA() {
     return this.a;
   }
 
-  getB() {
+  public getB() {
     return { x: this.b.x, y: this.a.y };
   }
 }

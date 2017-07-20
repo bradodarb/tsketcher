@@ -1,5 +1,4 @@
-import Vector from './vector'
-import * as math from './math'
+import Vector from './vector';
 
 export function LUT(a, b, cp1, cp2, scale) {
   scale = 1 / scale;

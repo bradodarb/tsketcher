@@ -1,5 +1,5 @@
-import Vector from './vector'
-import BBox from './bbox'
+import Vector from './vector';
+import BBox from './bbox';
 
 export const TOLERANCE = 1E-6;
 
@@ -8,8 +8,8 @@ export function distanceAB(a, b) {
 }
 
 export function distance(x1, y1, x2, y2) {
-  var dx = x1 - x2;
-  var dy = y1 - y2;
+  const dx = x1 - x2;
+  const dy = y1 - y2;
   return Math.sqrt(dx * dx + dy * dy);
 }
 
@@ -18,34 +18,34 @@ export function distanceAB3(a, b) {
 }
 
 export function distance3(x1, y1, z1, x2, y2, z2) {
-  var dx = x1 - x2;
-  var dy = y1 - y2;
-  var dz = z1 - z2;
+  const dx = x1 - x2;
+  const dy = y1 - y2;
+  const dz = z1 - z2;
   return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
 export function circleFromPoints(p1, p2, p3) {
-  var center = new Vector();
-  var offset = p2.x*p2.x + p2.y*p2.y;
-  var bc =   ( p1.x*p1.x + p1.y*p1.y - offset )/2.0;
-  var cd =   (offset - p3.x*p3.x - p3.y*p3.y)/2.0;
-  var det =  (p1.x - p2.x) * (p2.y - p3.y) - (p2.x - p3.x)* (p1.y - p2.y);
+  const center = new Vector();
+  const offset = p2.x * p2.x + p2.y * p2.y;
+  const bc = (p1.x * p1.x + p1.y * p1.y - offset) / 2.0;
+  const cd = (offset - p3.x * p3.x - p3.y * p3.y) / 2.0;
+  const det = (p1.x - p2.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p2.y);
 
   if (Math.abs(det) < TOLERANCE) { return null; }
 
-  var idet = 1/det;
+  const idet = 1 / det;
 
-  center.x =  (bc * (p2.y - p3.y) - cd * (p1.y - p2.y)) * idet;
-  center.y =  (cd * (p1.x - p2.x) - bc * (p2.x - p3.x)) * idet;
+  center.x = (bc * (p2.y - p3.y) - cd * (p1.y - p2.y)) * idet;
+  center.y = (cd * (p1.x - p2.x) - bc * (p2.x - p3.x)) * idet;
   return center;
 }
 
 export function norm2(vec) {
-  var sq = 0;
-  for (var i = 0; i < vec.length; i++) {
+  let sq = 0;
+  for (let i = 0; i < vec.length; i++) {
     sq += vec[i] * vec[i];
   }
-  return Math.sqrt(sq);  
+  return Math.sqrt(sq);
 }
 
 export function areEqual(v1, v2, tolerance) {
@@ -54,8 +54,8 @@ export function areEqual(v1, v2, tolerance) {
 
 export function areVectorsEqual(v1, v2, tolerance) {
   return areEqual(v1.x, v2.x, tolerance) &&
-         areEqual(v1.y, v2.y, tolerance) &&
-         areEqual(v1.z, v2.z, tolerance);
+    areEqual(v1.y, v2.y, tolerance) &&
+    areEqual(v1.z, v2.z, tolerance);
 }
 
 export function vectorsEqual(v1, v2) {
@@ -67,26 +67,26 @@ export function equal(v1, v2) {
 }
 
 export function strictEqual(a, b) {
-  return a.x == b.x && a.y == b.y && a.z == b.z;
+  return a.x === b.x && a.y === b.y && a.z === b.z;
 }
 
 export function strictEqual2D(a, b) {
-  return a.x == b.x && a.y == b.y;
+  return a.x === b.x && a.y === b.y;
 }
 
 export function _vec(size) {
-  var out = [];
+  const out = [];
   out.length = size;
-  for (var i = 0; i < size; ++i) {
+  for (let i = 0; i < size; ++i) {
     out[i] = 0;
   }
   return out;
 }
 
 export function _matrix(m, n) {
-  var out = [];
+  const out = [];
   out.length = m;
-  for (var i = 0; i < m; ++i) {
+  for (let i = 0; i < m; ++i) {
     out[i] = _vec(n);
   }
   return out;
@@ -97,8 +97,8 @@ export function rotate(px, py, angle) {
 }
 
 export function rotateInPlace(px, py, angle, out) {
-  out.x =  px * Math.cos(angle) - py * Math.sin(angle);
-  out.y =  px * Math.sin(angle) + py * Math.cos(angle);
+  out.x = px * Math.cos(angle) - py * Math.sin(angle);
+  out.y = px * Math.sin(angle) + py * Math.cos(angle);
   return out;
 }
 
@@ -120,11 +120,11 @@ export function polygonOffsetXY(polygon, scaleX, scaleY) {
 }
 
 
-export function polygonOffset( polygon, scale ) {
-  return polygonOffsetXY( polygon, scale, scale );
+export function polygonOffset(polygon, scale) {
+  return polygonOffsetXY(polygon, scale, scale);
 }
 
-export function polygonOffsetByDelta( polygon, delta ) {
+export function polygonOffsetByDelta(polygon, delta) {
   const origBBox = new BBox();
   for (let point of polygon) {
     origBBox.checkPoint(point);
@@ -134,57 +134,69 @@ export function polygonOffsetByDelta( polygon, delta ) {
   return polygonOffsetXY(polygon, (width + delta) / width, (height + delta) / height);
 }
 
-export function isPointInsidePolygon( inPt, inPolygon ) {
-  var EPSILON = TOLERANCE;
+export function isPointInsidePolygon(inPt, inPolygon) {
+  const EPSILON = TOLERANCE;
 
-  var polyLen = inPolygon.length;
+  const polyLen = inPolygon.length;
 
   // inPt on polygon contour => immediate success    or
   // toggling of inside/outside at every single! intersection point of an edge
   //  with the horizontal line through inPt, left of inPt
   //  not counting lowerY endpoints of edges and whole edges on that line
-  var inside = false;
-  for( var p = polyLen - 1, q = 0; q < polyLen; p = q ++ ) {
-    var edgeLowPt  = inPolygon[ p ];
-    var edgeHighPt = inPolygon[ q ];
+  let inside = false;
+  for (let p = polyLen - 1, q = 0; q < polyLen; p = q++) {
+    let edgeLowPt = inPolygon[p];
+    let edgeHighPt = inPolygon[q];
 
-    var edgeDx = edgeHighPt.x - edgeLowPt.x;
-    var edgeDy = edgeHighPt.y - edgeLowPt.y;
+    let edgeDx = edgeHighPt.x - edgeLowPt.x;
+    let edgeDy = edgeHighPt.y - edgeLowPt.y;
 
-    if ( Math.abs(edgeDy) > EPSILON ) {			// not parallel
-      if ( edgeDy < 0 ) {
-        edgeLowPt  = inPolygon[ q ]; edgeDx = - edgeDx;
-        edgeHighPt = inPolygon[ p ]; edgeDy = - edgeDy;
+    if (Math.abs(edgeDy) > EPSILON) {			// not parallel
+      if (edgeDy < 0) {
+        edgeLowPt = inPolygon[q]; edgeDx = - edgeDx;
+        edgeHighPt = inPolygon[p]; edgeDy = - edgeDy;
       }
-      if ( ( inPt.y < edgeLowPt.y ) || ( inPt.y > edgeHighPt.y ) ) 		continue;
+      if ((inPt.y < edgeLowPt.y) || (inPt.y > edgeHighPt.y)) {
+        continue;
+      }
 
-      if ( inPt.y == edgeLowPt.y ) {
-        if ( inPt.x == edgeLowPt.x )		return	true;		// inPt is on contour ?
+      if (inPt.y === edgeLowPt.y) {
+        if (inPt.x === edgeLowPt.x) {
+          return true;		// inPt is on contour ?
+        }
         // continue;				// no intersection or edgeLowPt => doesn't count !!!
       } else {
-        var perpEdge = edgeDy * (inPt.x - edgeLowPt.x) - edgeDx * (inPt.y - edgeLowPt.y);
-        if ( perpEdge == 0 )				return	true;		// inPt is on contour ?
-        if ( perpEdge < 0 ) 				continue;
-        inside = ! inside;		// true intersection left of inPt
+        const perpEdge = edgeDy * (inPt.x - edgeLowPt.x) - edgeDx * (inPt.y - edgeLowPt.y);
+        if (perpEdge === 0) {
+          return true;		// inPt is on contour ?
+        }
+        if (perpEdge < 0) {
+          continue;
+        }
+        inside = !inside;		// true intersection left of inPt
       }
     } else {		// parallel or colinear
-      if ( inPt.y != edgeLowPt.y ) 		continue;			// parallel
+      if (inPt.y !== edgeLowPt.y) {
+        continue;			// parallel
+      }
       // egde lies on the same horizontal line as inPt
-      if ( ( ( edgeHighPt.x <= inPt.x ) && ( inPt.x <= edgeLowPt.x ) ) ||
-        ( ( edgeLowPt.x <= inPt.x ) && ( inPt.x <= edgeHighPt.x ) ) )		return	true;	// inPt: Point on contour !
+      if (((edgeHighPt.x <= inPt.x) && (inPt.x <= edgeLowPt.x)) ||
+        ((edgeLowPt.x <= inPt.x) && (inPt.x <= edgeHighPt.x))) {
+        return true;	// inPt: Point on contour !
+      }
       // continue;
     }
   }
 
-  return	inside;
+  return inside;
 }
 
 // http://en.wikipedia.org/wiki/Shoelace_formula
 export function area(contour) {
-  var n = contour.length;
-  var a = 0.0;
-  for ( var p = n - 1, q = 0; q < n; p = q ++ ) {
-    a += contour[ p ].x * contour[ q ].y - contour[ q ].x * contour[ p ].y;
+  const n = contour.length;
+  let a = 0.0;
+  for (let p = n - 1, q = 0; q < n; p = q++) {
+    a += contour[p].x * contour[q].y - contour[q].x * contour[p].y;
   }
   return a * 0.5;
 }
@@ -195,12 +207,12 @@ export function isCCW(path2D) {
 
 export function findLowestLeftPoint(poly) {
   let heroIdx = 0;
-  for (let i = 1; i< poly.length; ++i) {
+  for (let i = 1; i < poly.length; ++i) {
     const point = poly[i];
     let hero = poly[heroIdx];
     if (point.y < hero.y) {
       heroIdx = i;
-    } else if (hero.y == point.y) {
+    } else if (hero.y === point.y) {
       if (point.x < hero.x) {
         heroIdx = i;
       }

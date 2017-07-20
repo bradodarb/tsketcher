@@ -1,4 +1,3 @@
-import * as utils from '../../util';
 import * as math from '../../math/math';
 
 import { EndPoint } from './end-point.render-model';
@@ -21,26 +20,26 @@ export class Circle extends SketchObject {
     this.radius.obj = this;
   }
 
-  collectParams(params) {
+  public collectParams(params) {
     this.center.collectParams(params);
     params.push(this.radius);
   }
 
-  getReferencePoint() {
+  public getReferencePoint() {
     return this.center;
   }
 
-  translateSelf(dx, dy) {
+  public translateSelf(dx, dy) {
     this.center.translate(dx, dy);
   }
 
-  drawSelf(viewport: Viewport2d) {
+  public drawSelf(viewport: Viewport2d) {
     viewport.context.beginPath();
     viewport.context.arc(this.center.x, this.center.y, this.radius.get(), 0, 2 * Math.PI);
     viewport.context.stroke();
   }
 
-  normalDistance(aim) {
+  public normalDistance(aim) {
     return Math.abs(math.distance(aim.x, aim.y, this.center.x, this.center.y) - this.radius.get());
   }
 }

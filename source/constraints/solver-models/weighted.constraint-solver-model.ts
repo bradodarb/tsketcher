@@ -1,4 +1,4 @@
-import { ConstraintResolver } from './base.constraint-solver-model'
+import { ConstraintResolver } from './base.constraint-solver-model';
 
 
 export class Weighted extends ConstraintResolver {
@@ -18,7 +18,7 @@ export class Weighted extends ConstraintResolver {
 
   public gradient(out: Array<number>): void {
     this.constr.gradient(out);
-    for (var i = 0; i < out.length; i++) {
+    for (let i = 0; i < out.length; i++) {
       out[i] *= this.weight;
     }
   }

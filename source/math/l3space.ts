@@ -1,14 +1,14 @@
 import Vector from './vector';
 
-var ORIGIN = new Vector(0, 0, 0);
+const ORIGIN = new Vector(0, 0, 0);
 
-var AXIS = {
+const AXIS = {
   X: new Vector(1, 0, 0),
   Y: new Vector(0, 1, 0),
   Z: new Vector(0, 0, 1)
 };
 
-var IDENTITY_BASIS = [AXIS.X, AXIS.Y, AXIS.Z];
+const IDENTITY_BASIS = [AXIS.X, AXIS.Y, AXIS.Z];
 
 export const STANDARD_BASES = {
   'XY': IDENTITY_BASIS,

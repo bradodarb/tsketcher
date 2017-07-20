@@ -1,13 +1,12 @@
 import { SketchObject } from './sketch-shape.render-model';
 import { Param } from '../../constraints/parametrics/parameter';
-import { DrawPoint } from '../utils';
-import Vector from '../../math/vector'
+import Vector from '../../math/vector';
 import { Viewport2d } from '../../viewport';
 
 export class EndPoint extends SketchObject {
-  public x: number = 0;
-  public y: number = 0;
-  public size: number = 3;
+  public x = 0;
+  public y = 0;
+  public size = 3;
   public parent = null;
 
   public _x: Param = new Param(this, 'x');
